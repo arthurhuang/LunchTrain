@@ -1,0 +1,41 @@
+* {
+	margin: 0;
+    padding: 0;
+}
+body {
+	font-family: Trebuchet MS;
+}
+a {
+	color: #000;
+}
+a:hover, a:active, a:visited {
+	text-decoration: none;
+}
+#main {
+	width: 780px;
+    margin: 0 auto;
+	margin-top: 50px;
+	padding: 10px;
+    border: 1px solid #CCC;
+    background-color: #EEE;
+}
+form fieldset {	border: 0; }
+form fieldset p br { clear: left; }
+label {
+	margin-top: 5px;
+    display: block;
+    width: 100px;
+    padding: 0;
+    float: left;
+}
+input {
+	font-family: Trebuchet MS;
+    border: 1px solid #CCC;
+	margin-bottom: 5px;
+    background-color: #FFF;
+    padding: 2px;
+}
+input:hover {
+	border: 1px solid #222;
+    background-color: #EEE;
+}
