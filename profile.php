@@ -12,7 +12,7 @@
 <body>
 <div id="body">
 	 	<div id="topbar">
-	 		<div id="topbartitle">LunchTrain
+	 		<div id="topbartitle"><a href="profile.php">LunchTrain</a>
 	 		</div>
 	 		<div id="topbarlogout">
 	 			<a href="logout.php">Logout</a> 
