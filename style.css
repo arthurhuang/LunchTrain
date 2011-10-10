@@ -3,7 +3,7 @@
     padding: 0;
 }
 body {
-	font-family: Trebuchet MS;
+	font-family: Helvetica, sans-serif;
 }
 a {
 	color: #000;
@@ -11,25 +11,180 @@ a {
 a:hover, a:active, a:visited {
 	text-decoration: none;
 }
-#main {
-	width: 780px;
-    margin: 0 auto;
-	margin-top: 50px;
-	padding: 10px;
-    border: 1px solid #CCC;
-    background-color: #EEE;
+#body {
+	background-color:#F5F6F6;
+}
+#topbar {
+width:100%;
+height:30px;
+background:#bcee68;
+font-family:Helvetica;
+font-size:17px;
+}
+#topbartitle{
+width:800px;
+height:20px;
+margin-left:200px;
+font-weight:bold;
+padding: 8px 0px 0px 0px;
+float:left;
+}
+
+#topbarlogout{
+width:100%;
+height:20px;
+padding: 8px 0px 0px 0px;
+}
+#leftsidebar {
+width:154px;
+height:100%;
+float:left;
+margin-left:200px;
+}
+#name {
+height:100%;
+}
+#leftsidebarpic {
+height:150px;
+background-image: url('images/profilepic.jpg');
+background-repeat: no-repeat;
+}
+#leftsidebarinfo {
+height:300px;
+}
+
+
+#right{
+width:600px;
+height:100%;
+float:left;
+
+}
+
+#background {
+background: url('images/box.jpg') top center;
+opacity: .1;
+height: 100%;
+width: 100%;
+position: fixed;
+top: 0;
+left: 0;
+
+}
+#righttitle{
+height:30px;
+}
+
+#rightbody{
+height:300px;
+}
+
+
+#container {
+	width: 440px;
+	height: 500px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color:#F5F6F6;
+}
+
+#header nav {
+  margin-left: 208px;
+}
+#header li {
+  float: left;
+  list-style-type:none;
+}
+#header li a {
+  float: left;
+  font-size: 15px;
+  margin: 6px 0;
+  padding: 4px 0 4px 13px;
+  font-weight: bold;
+  color: #1d1d1d;
+  text-decoration: none;
+  width: 100px;
+  border-left: 1px solid #999;
+}
+#header li strong {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #fff;
+  padding-top: 4px;
+  color: #999;
+}
+#header li:last-child a {
+  margin-right: 0;
+}
+#header li.active a, #header li a:hover {
+  background: #ff5b01;
+  border-left: 1px solid #ff5b01;
+  background-color: #999999;
+}
+#header li.active a, #header li a:hover strong {
+  color: #1d1d1d;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#title {
+height:50px;
+background-image: url('images/logo.png');
+background-repeat: no-repeat;
+margin-left: 211px;
+margin-top: 0px;
+background-color:#F5F6F6;
+}
+#content{
+height: 257px;
+margin-left:0px;
+border:2px solid #DDD;
+background:white;
+border-radius:1em;
+-khtml-border-radius: 1em;
+}
+#contenttop{
+height:50px;
+width:400px;
+margin-left:auto;
+margin-right:auto;
+font-weight:bold;
+font-size:24px;
+color:#444;
+text-align: center;
+margin-top:12px;
+}
+#contentmiddle{
+height: 90px;
+margin-left: 65px;
+}
+#contentbottom {
+height: 100px;
+background-image: url('images/train.png');
+background-repeat: no-repeat;
+margin-left: 7px;
 }
 form fieldset {	border: 0; }
 form fieldset p br { clear: left; }
 label {
-	margin-top: 5px;
     display: block;
     width: 100px;
     padding: 0;
     float: left;
 }
 input {
-	font-family: Trebuchet MS;
+	font-family: Helvetica;
     border: 1px solid #CCC;
 	margin-bottom: 5px;
     background-color: #FFF;

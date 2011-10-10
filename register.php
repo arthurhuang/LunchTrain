@@ -8,22 +8,23 @@
 <body>  
 <div id="main">
 <?php
-if(!empty($_POST['username']) && !empty($_POST['password']))
+if(!empty($_POST['email']) && !empty($_POST['password']))
 {
-	$username = mysql_real_escape_string($_POST['username']);
+	$email = mysql_real_escape_string($_POST['email']);
     $password = md5(mysql_real_escape_string($_POST['password']));
-    $email = mysql_real_escape_string($_POST['email']);
+    $firstName = mysql_real_escape_string($_POST['firstName']);
+    $lastName = mysql_real_escape_string($_POST['lastName']);
     
-	 $checkusername = mysql_query("SELECT * FROM users WHERE Username = '".$username."'");
+	$checkusername = mysql_query("SELECT * FROM users WHERE email = '".$email."'");
      
      if(mysql_num_rows($checkusername) == 1)
      {
      	echo "<h1>Error</h1>";
-        echo "<p>Sorry, that username is taken. Please go back and try again.</p>";
+        echo "<p>Sorry, that email is already in use. Please go back and try again.</p>";
      }
      else
      {
-     	$registerquery = mysql_query("INSERT INTO users (Username, Password, EmailAddress) VALUES('".$username."', '".$password."', '".$email."')");
+     	$registerquery = mysql_query("INSERT INTO users (email, password, firstname, lastname) VALUES('".$email."', '".$password."', '".$firstName."', '".$lastName."')");
         if($registerquery)
         {
         	echo "<h1>Success</h1>";
@@ -46,9 +47,10 @@ else
     
 	<form method="post" action="register.php" name="registerform" id="registerform">
 	<fieldset>
-		<label for="username">Username:</label><input type="text" name="username" id="username" /><br />
+		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
+		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
+		<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
 		<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
-        <label for="email">Email Address:</label><input type="text" name="email" id="email" /><br />
 		<input type="submit" name="register" id="register" value="Register" />
 	</fieldset>
 	</form>
