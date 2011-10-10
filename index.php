@@ -7,19 +7,37 @@
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>  
 <body>  
-<div id="body">
-<div id="container">
 <?php
-ob_start();
 if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 {
 	 ?>
-    <h1>LunchTrain works</h1>
-  	<p>Thanks for logging in! You are <b><?=$_SESSION['firstName']?></b> <b><?=$_SESSION['lastName']?></b>. Your email address is <b><?=$_SESSION['Email']?></b>.</p>
-    
-    <ul>
-        <li><a href="logout.php">Logout.</a></li>
-    </ul>
+	 <div id="body">
+	 	<div id="topbar">
+	 		<div id="topbartitle">LunchTrain
+	 		</div>
+	 		<div id="topbarlogout">
+	 			<a href="logout.php">Logout</a> 
+	 		</div>
+	 	</div>
+	 	<div id="leftsidebar">
+			 <div id="leftsidebarpic">
+	 		</div>
+	 		<div id="name">
+	 			<p><?=$_SESSION['firstName']?> <?=$_SESSION['lastName']?></p>
+	 		</div>
+			 <div id="leftsidebarinfo">
+	 		</div>
+	 	</div>
+	 	<div id="right">
+	 		<div id="rightbody">
+	 			<header id="header">
+	 				<li><a href="#">Trains</a></li>
+	 				<li><a href="#">About Me</a></li>
+			 		<li><a href="#">Friends</a></li>
+	 			</header>
+	 		</div>
+	 	</div>
+	 </div>
     <?php
 }
 elseif(!empty($_POST['email']) && !empty($_POST['password']))
@@ -57,6 +75,8 @@ elseif(!empty($_POST['email']) && !empty($_POST['password']))
 else
 {
 	?>
+	<div id="body">
+	<div id="container">
 	<div id="title">
 	</div>
 	<div id="content">
