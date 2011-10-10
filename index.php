@@ -7,14 +7,15 @@
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>  
 <body>  
-<div id="main">
+<div id="body">
+<div id="container">
 <?php
-if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username']))
+if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 {
 	 ?>
     
     <h1>LunchTrain works</h1>
-  	 <p>Thanks for logging in! You are <b><?=$_SESSION['Username']?><b> and your email address is <b><?=$_SESSION['EmailAddress']?></b>.</p>
+  	<p>Thanks for logging in! You are <b><?=$_SESSION['firstName']?></b> <b><?=$_SESSION['lastName']?></b>. Your email address is <b><?=$_SESSION['Email']?></b>.</p>
     
     <ul>
         <li><a href="logout.php">Logout.</a></li>
@@ -22,23 +23,26 @@ if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username']))
     
     <?php
 }
-elseif(!empty($_POST['username']) && !empty($_POST['password']))
+elseif(!empty($_POST['email']) && !empty($_POST['password']))
 {
-	 $username = mysql_real_escape_string($_POST['username']);
+	$email = mysql_real_escape_string($_POST['email']);
     $password = md5(mysql_real_escape_string($_POST['password']));
     
-	 $checklogin = mysql_query("SELECT * FROM users WHERE Username = '".$username."' AND Password = '".$password."'");
+	 $checklogin = mysql_query("SELECT * FROM users WHERE email = '".$email."' AND password = '".$password."'");
     
     if(mysql_num_rows($checklogin) == 1)
     {
-    	 $row = mysql_fetch_array($checklogin);
-        $email = $row['EmailAddress'];
+    	$row = mysql_fetch_array($checklogin);
+        $emailResult = $row['email'];
+        $firstName = $row['firstname'];
+        $lastName = $row['lastname'];
         
-        $_SESSION['Username'] = $username;
-        $_SESSION['EmailAddress'] = $email;
+        $_SESSION['firstName'] = $firstname;
+        $_SESSION['lastName'] = $lastname;
+        $_SESSION['Email'] = $emailResult;
         $_SESSION['LoggedIn'] = 1;
         
-    	 echo "<h1>Success</h1>";
+    	echo "<h1>Success</h1>";
         echo "<p>We are now redirecting you to the member area.</p>";
         echo "<meta http-equiv='refresh' content='=2;index.php' />";
     }
@@ -51,22 +55,31 @@ elseif(!empty($_POST['username']) && !empty($_POST['password']))
 else
 {
 	?>
-    
-   <h1>Member Login</h1>
-    
-   <p>Thanks for visiting! Please either login below, or <a href="register.php">click here to register</a>.</p>
-    
-	<form method="post" action="index.php" name="loginform" id="loginform">
-	<fieldset>
-		<label for="username">Username:</label><input type="text" name="username" id="username" /><br />
-		<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
-		<input type="submit" name="login" id="login" value="Login" />
-	</fieldset>
-	</form>
+	<div id="title">
+	</div>
+	<div id="content">
+		<div id="contenttop">
+			<p> Collaborative lunch planning <p>
+		</div>
+		<div id="contentmiddle">
+		<form method="post" action="index.php" name="loginform" id="loginform">
+			<fieldset>
+				<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
+				<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
+				<input type="submit" name="login" id="login" value="Login" />
+				<a href="register.php">Register</a>
+			</fieldset>
+		</form>
+		</div>
+
+		<div id="contentbottom">
+		</div>
+	</div>
     
    <?php
 }
 ?>
+</div>
 </div>
 </body>
 </html>
