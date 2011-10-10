@@ -18,16 +18,22 @@ a:hover, a:active, a:visited {
 width:100%;
 height:30px;
 background:#bcee68;
-
-}
-#topbartitle{
-width:100%;
-height:100%;
-margin-left:200px;
 font-family:Helvetica;
 font-size:17px;
-padding: 9px 0px 0px 0px;
+}
+#topbartitle{
+width:800px;
+height:20px;
+margin-left:200px;
 font-weight:bold;
+padding: 8px 0px 0px 0px;
+float:left;
+}
+
+#topbarlogout{
+width:100%;
+height:20px;
+padding: 8px 0px 0px 0px;
 }
 #leftsidebar {
 width:154px;
