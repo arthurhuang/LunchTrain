@@ -23,8 +23,8 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
         $firstName = $row['firstname'];
         $lastName = $row['lastname'];
         
-        $_SESSION['firstName'] = $firstname;
-        $_SESSION['lastName'] = $lastname;
+        $_SESSION['firstName'] = $firstName;
+        $_SESSION['lastName'] = $lastName;
         $_SESSION['Email'] = $emailResult;
         $_SESSION['LoggedIn'] = 1;
     	echo "<h1>Login successful.</h1>";
