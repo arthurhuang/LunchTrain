@@ -12,7 +12,7 @@ if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 	 ?>
 	 <div id="body">
 	 	<div id="topbar">
-	 		<div id="topbartitle">LunchTrain
+	 		<div id="topbartitle"><a href="profile.php">LunchTrain</a>
 	 		</div>
 	 		<div id="topbarlogout">
 	 			<a href="logout.php">Logout</a> 
@@ -51,7 +51,11 @@ if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 				    die($message);
 				}
 				while ($row = mysql_fetch_assoc($result)) {
-				    echo "<p> <b>Train name</b>: {$row['trainName']}, departure time: {$row['departureTime']}, meeting place: {$row['meetingPlace']}, transportation: {$row['transportType']},spaces available: {$row['spaceAvailable']} </p>";
+				    echo "<p> <b>Train name</b>: {$row['trainName']} </p>";
+				    echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
+				    echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
+				    echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
+				    echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
 				    echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
 				    echo "<br>";
 				}
