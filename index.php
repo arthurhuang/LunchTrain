@@ -27,6 +27,7 @@ if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 	 		</div>
 	 		<div id="name">
 	 			<p><?=$_SESSION['firstName']?> <?=$_SESSION['lastName']?></p>
+	 			<p> <a href="addtrain.php">Add Train</a></p>
 	 		</div>
 			 <div id="leftsidebarinfo">
 	 		</div>
