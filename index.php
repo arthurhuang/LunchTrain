@@ -10,21 +10,21 @@
 <div id="body">
 <div id="container">
 <?php
+ob_start();
 if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email']))
 {
 	 ?>
-    
     <h1>LunchTrain works</h1>
   	<p>Thanks for logging in! You are <b><?=$_SESSION['firstName']?></b> <b><?=$_SESSION['lastName']?></b>. Your email address is <b><?=$_SESSION['Email']?></b>.</p>
     
     <ul>
         <li><a href="logout.php">Logout.</a></li>
     </ul>
-    
     <?php
 }
 elseif(!empty($_POST['email']) && !empty($_POST['password']))
 {
+	
 	$email = mysql_real_escape_string($_POST['email']);
     $password = md5(mysql_real_escape_string($_POST['password']));
     
@@ -36,19 +36,21 @@ elseif(!empty($_POST['email']) && !empty($_POST['password']))
         $emailResult = $row['email'];
         $firstName = $row['firstname'];
         $lastName = $row['lastname'];
+                //echo "<meta http-equiv="refresh" content='=2;index.php' />";
         
         $_SESSION['firstName'] = $firstname;
         $_SESSION['lastName'] = $lastname;
         $_SESSION['Email'] = $emailResult;
         $_SESSION['LoggedIn'] = 1;
-        
     	echo "<h1>Success</h1>";
         echo "<p>We are now redirecting you to the member area.</p>";
-        echo "<meta http-equiv='refresh' content='=2;index.php' />";
+       	
+        header("Location: /index.php");
+        exit;
     }
     else
     {
-    	 echo "<h1>Error</h1>";
+    	echo "<h1>Error</h1>";
         echo "<p>Sorry, your account could not be found. Please <a href=\"index.php\">click here to try again</a>.</p>";
     }
 }

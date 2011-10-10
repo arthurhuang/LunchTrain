@@ -2,7 +2,7 @@
 session_start();
 
 $dbhost = '127.0.0.1'; // this will ususally be 'localhost', but can sometimes differ
-$dbname = 'users'; // the name of the database that you are going to use for this project
+$dbname = 'lunchtrain'; // the name of the database that you are going to use for this project
 $dbuser = 'root'; // the username that you created, or were given, to access your database
 $dbpass = ''; // the password that you created, or were given, to access your database
 
