@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 $dbhost = '127.0.0.1'; // this will ususally be 'localhost', but can sometimes differ
 $dbname = 'lunchtrain'; // the name of the database that you are going to use for this project
