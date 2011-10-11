@@ -15,7 +15,11 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
     $password = md5(mysql_real_escape_string($_POST['password']));
     $firstName = mysql_real_escape_string($_POST['firstName']);
     $lastName = mysql_real_escape_string($_POST['lastName']);
-    
+	if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		echo "<h1>Error</h1>";
+        echo "<p>Sorry, you gave an invalid email address. Please <a href=\"register.php\">try again</a>.</p>";  
+        exit;
+	}
 	$checkusername = mysql_query("SELECT * FROM users WHERE email = '".$email."'");
      
      if(mysql_num_rows($checkusername) == 1)

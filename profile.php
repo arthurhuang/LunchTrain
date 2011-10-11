@@ -39,7 +39,7 @@
 					$tab = $_GET['tab'];
 					if ($tab == "viewTrains" || $tab == "") {
 						echo "<h2>Current trains:</h2>";
-						$result = mysql_query("SELECT * FROM Trains");
+						$result = mysql_query("SELECT * FROM trains");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -58,7 +58,38 @@
 		 				echo "<p>About Me</p>";
 					} 
 	 				elseif ($tab == "friends") {
-	 					echo "<p>Friends</p>";
+	 					echo "<h2>Friends</h2>";
+	 					$currentFriendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$_SESSION['userID']."'");
+	 					if(!$currentFriendQuery) {
+	 						$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
+						while ($row = mysql_fetch_assoc($currentFriendQuery)) {
+							$friendID = $row['friendid'];
+							$friendNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$friendID."'");
+							if(!$friendNameQuery) {
+		 						$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							if(mysql_num_rows($friendNameQuery) == 1) {
+								$friendNameRow = mysql_fetch_assoc($friendNameQuery);
+								$friendFirstName = $friendNameRow['firstname'];
+								$friendLastName = $friendNameRow['lastname'];
+								echo "<p> $friendFirstName $friendLastName </p>";
+							}
+						}
+	 					echo "<br>";
+	 					echo "<h2>These people are not your friends.</h2>";
+	 					//i want all the users who are NOT this user AND are not already friends with this user
+	 					//query is wrong
+	 					$peopleNotFriendsQuery = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."' AND NOT EXISTS (SELECT friendid FROM user_friends WHERE userid = '".$_SESSION['userID']."')");
+	 					if (!$peopleNotFriendsQuery) {
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
+						while ($row = mysql_fetch_assoc($peopleNotFriendsQuery)) {
+							echo "<p> {$row['firstname']} {$row['lastname']} </p>";
+						}
 	 				} 
 	 				elseif ($tab == "addTrain") {
 	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) ) {

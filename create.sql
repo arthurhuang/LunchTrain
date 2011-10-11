@@ -1,14 +1,15 @@
 BEGIN;
 
-DROP TABLE IF EXISTS network;
 DROP TABLE IF EXISTS user_in_train;
+DROP TABLE IF EXISTS user_friends;
 DROP TABLE IF EXISTS train_to_loc;
 DROP TABLE IF EXISTS user_send_msg;
 DROP TABLE IF EXISTS user_in_net;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS trains; 
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS network;
+DROP TABLE IF EXISTS users;
 
 
 -- store all the users who have registered.
@@ -90,4 +91,11 @@ CREATE TABLE IF NOT EXISTS user_in_net (
         FOREIGN KEY (netid) REFERENCES network(netid)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS user_friends (
+       userid INT NOT NULL,
+       friendid INT NOT NULL,
+       UNIQUE (userid, friendid),
+       FOREIGN KEY (userid) REFERENCES users(userid),
+       FOREIGN KEY (friendid) REFERENCES users(userid)
+) ENGINE=InnoDB;
 COMMIT;
