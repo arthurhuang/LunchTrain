@@ -54,9 +54,76 @@
 						    echo "<br>";
 						}
 					}
-					elseif ($tab == "aboutMe") {
-		 				echo "<p>About Me</p>";
+					elseif ($tab == "aboutMe") { ?>
+						<form method="post" action="profile.php?tab=editProfile" name="registerform"
+						id="registerform">
+						<input type="submit" name="edit" id="edit" value="Edit Profile" />
+						</form>
+						
+						<?php  
+						$email = $_SESSION['Email'];
+						$result = mysql_query("SELECT * FROM Profiles WHERE email = '".$email."'");
+						if (!$result) {
+							echo "<p>Your profile has not been set up yet.</p>";
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
+						while ($row = mysql_fetch_assoc($result)) {
+							echo "<p> <b>Employment</b>: {$row['employment']} </p>";
+							echo "<p> <b>Education</b>: {$row['education']} </p>";
+							echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
+							echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
+							echo "<br>";
+						}
+						
+						
+						
 					} 
+					elseif ($tab == "editProfile") { ?>
+						<p>Please enter your information below to edit your profile.</p>
+						
+						<form method="post" action="profile.php?tab=submitProfile" name="registerform"
+						id="registerform">
+						<fieldset>
+						<label for="employment">Employment:</label>
+						<input type="text" name="employment" id="employment" /><br />
+						<label for="education">Education:</label>
+						<input type="text" name="education" id="education" /><br />
+						<label for="favorite_food">Favorite Foods:</label>
+						<input type="text" name="favorite_food" id="favorite_food" /><br />
+						<label for="favorite_restaurant">Favorite Restaurants:</label>
+						<input type="text" name="favorite_restaurant" id="favorite_restaurant" /><br />
+						<input type="submit" name="edit" id="edit" value="Edit" />
+						</fieldset>
+						</form>
+					<?php  
+					}
+					elseif ($tab == "submitProfile") {
+						if(!empty($_POST['employment']) && !empty($_POST['education']) && !empty($_POST['favorite_food']) && !empty($_POST['favorite_restaurant']) ) {
+							$email = $_SESSION['Email'];
+							$employment = mysql_real_escape_string($_POST['employment']);
+							$education = mysql_real_escape_string($_POST['education']);
+							$favoriteFood = mysql_real_escape_string($_POST['favorite_food']);
+							$favoriteRestaurant = mysql_real_escape_string($_POST['favorite_restaurant']);
+							
+							
+							$result = mysql_query("INSERT INTO Profiles (email, employment, education, favoriteFood, favoriteRestaurant)
+													VALUES('".$email."', '".$employment."', '".$education."', '".$favoriteFood."', '".$favoriteRestaurant."')");
+							if ($result) {
+								echo "<h1>Your profile has been edited.</h1>";
+								echo "<p>We are now redirecting you to your profile page.</p>";
+								echo "<meta http-equiv='refresh' content='1.5;profile.php?tab=aboutMe' />";
+							} else { 
+								echo "<p> insert profile query failed </p>";
+							}
+						} else { ?>
+							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
+							<input type="submit" name="edit" id="edit" value="Edit Profile" />
+							</form>
+							<p>You did not fill in all fields.</p>
+						<?php 	
+						}
+					}
 	 				elseif ($tab == "friends") {
 	 					echo "<p>Friends</p>";
 	 				} 
@@ -119,8 +186,8 @@
 									<input type="text" name="train_description" id="train_description" /><br /> 
 									<input type="submit" name="add" id="add" value="Add Train" />
 								</fieldset>
-								</form>
-								</div>
+							</form>
+							</div>
 							 <?php }
 	 				} ?>
 	 		</div>
