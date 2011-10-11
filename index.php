@@ -22,11 +22,13 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
         $emailResult = $row['email'];
         $firstName = $row['firstname'];
         $lastName = $row['lastname'];
+        $userid = $row['userid'];
         
         $_SESSION['firstName'] = $firstName;
         $_SESSION['lastName'] = $lastName;
         $_SESSION['Email'] = $emailResult;
         $_SESSION['LoggedIn'] = 1;
+        $_SESSION['userID'] = $userid;
     	echo "<h1>Login successful for $firstName $lastName.</h1>";
         echo "<p>We are now redirecting you to your profile page.</p>";
        	echo "<meta http-equiv='refresh' content='1.5;profile.php' />";
