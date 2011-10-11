@@ -54,15 +54,9 @@
 						    echo "<br>";
 						}
 					}
-					elseif ($tab == "aboutMe") { ?>
-						<form method="post" action="profile.php?tab=editProfile" name="registerform"
-						id="registerform">
-						<input type="submit" name="edit" id="edit" value="Edit Profile" />
-						</form>
-						
-						<?php  
+					elseif ($tab == "aboutMe") {
 						$email = $_SESSION['Email'];
-						$result = mysql_query("SELECT * FROM Profiles WHERE email = '".$email."'");
+						$result = mysql_query("SELECT * FROM profiles WHERE email = '".$email."'");
 						if (!$result) {
 							echo "<p>Your profile has not been set up yet.</p>";
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -75,9 +69,12 @@
 							echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
 							echo "<br>";
 						}
-						
-						
-						
+						?>
+						<form method="post" action="profile.php?tab=editProfile" name="registerform"
+						id="registerform">
+						<input type="submit" name="edit" id="edit" value="Edit Profile" />
+						</form>
+						<?php
 					} 
 					elseif ($tab == "editProfile") { ?>
 						<p>Please enter your information below to edit your profile.</p>
@@ -107,7 +104,7 @@
 							$favoriteRestaurant = mysql_real_escape_string($_POST['favorite_restaurant']);
 							
 							
-							$result = mysql_query("INSERT INTO Profiles (email, employment, education, favoriteFood, favoriteRestaurant)
+							$result = mysql_query("INSERT INTO profiles (email, employment, education, favoriteFood, favoriteRestaurant)
 													VALUES('".$email."', '".$employment."', '".$education."', '".$favoriteFood."', '".$favoriteRestaurant."')");
 							if ($result) {
 								echo "<h1>Your profile has been edited.</h1>";
@@ -206,9 +203,22 @@
 									<label for="train_name">Train Name:</label>
 									<input type="text" name="train_name" id="train_name" /><br />
 									<label for="meeting_time">Meeting Time:</label>
-									<input type="text" name="meeting_time" id="meeting_time" /><br /> 
+									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
+									:
+									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
+									<select name="ampm">
+										<option value="am">am</option>
+										<option value="pm">pm</option>
+									</select>
+									<br /> 
 									<label for="transportation_type">Transportation Type:</label>
-									<input type="text" name="transportation_type" id="transportation_type" /><br />
+									<select name="transportation_type">
+										<option value="driving">Driving</option>
+										<option value="walking">Walking</option>
+										<option value="biking">Biking</option>
+										<option value="public">Public Transportation</option>
+										<option value="other">Other</option>
+									</select><br />
 									<label for="meeting_place">Meeting Place:</label>
 									<input type="text" name="meeting_place" id="meeting_place" /><br />
 									<label for="seat_available">Seat Available:</label>

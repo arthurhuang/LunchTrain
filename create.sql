@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS trains;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS network;
+DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS users;
 
 
@@ -97,5 +98,12 @@ CREATE TABLE IF NOT EXISTS user_friends (
        UNIQUE (userid, friendid),
        FOREIGN KEY (userid) REFERENCES users(userid),
        FOREIGN KEY (friendid) REFERENCES users(userid)
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS profiles (
+       email varchar(50) not null primary key,
+       employment varchar(50),
+       education varchar(75),
+       favoriteFood varchar(75),
+       favoriteRestaurant varchar(50)
 ) ENGINE=InnoDB;
 COMMIT;
