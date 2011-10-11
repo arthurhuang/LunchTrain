@@ -40,6 +40,7 @@ width:154px;
 height:100%;
 float:left;
 margin-left:200px;
+border-right: 1px solid #999;
 }
 #name {
 height:100%;
@@ -58,6 +59,7 @@ height:300px;
 width:600px;
 height:100%;
 float:left;
+margin-left:5px;
 
 }
 
@@ -72,12 +74,16 @@ left: 0;
 
 }
 #righttitle{
-height:30px;
+height:40px;
 }
 
 #rightbody{
 height:300px;
 }
+#rightbottom{
+	
+}
+
 
 
 #container {
@@ -118,12 +124,12 @@ height:300px;
   margin-right: 0;
 }
 #header li.active a, #header li a:hover {
-  background: #ff5b01;
   border-left: 1px solid #ff5b01;
-  background-color: #999999;
+  background-color: #EEEEEE;
 }
 #header li.active a, #header li a:hover strong {
   color: #1d1d1d;
+  background-color: #EEEEEE;
 }
 
 
@@ -179,7 +185,7 @@ form fieldset {	border: 0; }
 form fieldset p br { clear: left; }
 label {
     display: block;
-    width: 100px;
+    width: 175px;
     padding: 0;
     float: left;
 }
