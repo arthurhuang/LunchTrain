@@ -41,18 +41,23 @@
 					if ($tab == 1 || $tab == "") { ?>
 						<h2>Current trains:</h2>
 		
-					<?php
-						$result =mysql_query("SELECT * FROM Trains");
-						if (!$result) {
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							$message .= 'Whole query: ' . $query;
-							die($message);
-						}
-						while ($row = mysql_fetch_assoc($result)) {
-							echo "<p> <b>Train name</b>: {$row['trainName']}, departure time: {$row['departureTime']}, meeting place: {$row['meetingPlace']}, transportation: {$row['transportType']},spaces available: {$row['spaceAvailable']} </p>";
-							echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
-								    echo "<br>";
-						}
+					<?php 
+				$result =mysql_query("SELECT * FROM Trains");
+				if (!$result) {
+				    $message  = 'Invalid query: ' . mysql_error() . "\n";
+				    $message .= 'Whole query: ' . $query;
+				    die($message);
+				}
+				while ($row = mysql_fetch_assoc($result)) {
+				    echo "<p> <b>Train name</b>: {$row['trainName']} </p>";
+				    echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
+				    echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
+				    echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
+				    echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
+				    echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
+				    echo "<br>";
+				}
+				
 					}
 					elseif ($tab == 2) { ?>
 		 				<p>About Me</p>	

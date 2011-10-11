@@ -124,12 +124,12 @@ height:300px;
   margin-right: 0;
 }
 #header li.active a, #header li a:hover {
-  background: #ff5b01;
   border-left: 1px solid #ff5b01;
   background-color: #EEEEEE;
 }
 #header li.active a, #header li a:hover strong {
   color: #1d1d1d;
+  background-color: #EEEEEE;
 }
 
 
