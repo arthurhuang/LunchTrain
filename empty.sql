@@ -1,6 +1,7 @@
 BEGIN;
 
 DROP TABLE IF EXISTS user_in_train;
+DROP TABLE IF EXISTS user_friends;
 DROP TABLE IF EXISTS train_to_loc;
 DROP TABLE IF EXISTS user_send_msg;
 DROP TABLE IF EXISTS user_in_net;
