@@ -17,7 +17,7 @@ a:hover, a:active, a:visited {
 #topbar {
 width:100%;
 height:30px;
-background:#bcee68;
+background:#eee;
 font-family:Helvetica;
 font-size:17px;
 }
@@ -39,8 +39,9 @@ padding: 8px 0px 0px 0px;
 width:154px;
 height:100%;
 float:left;
-margin-left:200px;
+padding-left:200px;
 border-right: 1px solid #999;
+background:#fff;
 }
 #name {
 height:100%;
@@ -56,10 +57,11 @@ height:300px;
 
 
 #right{
-width:600px;
+width:886px;
 height:100%;
 float:left;
-margin-left:5px;
+margin-left:0px;
+background:#eee;
 
 }
 
@@ -75,10 +77,11 @@ left: 0;
 }
 #righttitle{
 height:40px;
+background-color:#222;
 }
 
 #rightbody{
-height:300px;
+height:100%;
 }
 #rightbottom{
 	
@@ -103,21 +106,23 @@ height:300px;
 }
 #header li a {
   float: left;
-  font-size: 15px;
-  margin: 6px 0;
-  padding: 4px 0 4px 13px;
-  font-weight: bold;
-  color: #1d1d1d;
+  font-size: 13px;
+  padding-left:3px;
+  padding-top:11px;
+  font-weight: normal;
+  color: #EEE;
   text-decoration: none;
   width: 100px;
-  border-left: 1px solid #999;
+  border-left: 1px solid #333;
+  border-right: 1px solid #000;
+  height: 29px;
 }
 #header li strong {
   display: block;
   font-size: 11px;
   text-transform: uppercase;
   color: #fff;
-  padding-top: 4px;
+  padding-top: 0px;
   color: #999;
 }
 #header li:last-child a {
@@ -125,12 +130,9 @@ height:300px;
 }
 #header li.active a, #header li a:hover {
   border-left: 1px solid #ff5b01;
-  background-color: #EEEEEE;
+  background-color: #333;
 }
-#header li.active a, #header li a:hover strong {
-  color: #1d1d1d;
-  background-color: #EEEEEE;
-}
+
 
 
 
