@@ -21,6 +21,7 @@
 	 		<div id="name">
 	 			<?php echo "<p> {$_SESSION['firstName']} {$_SESSION['lastName']} </p>" ?>
 	 			<p> <a href="profile.php?tab=addTrain">Add Train</a></p>
+	 			<p> <a href="profile.php?tab=joinNetwork">Join Network</a></p>
 	 		</div>
 			 <div id="leftsidebarinfo">
 	 		</div>
@@ -155,6 +156,74 @@
 							echo "<p> {$row['firstname']} {$row['lastname']} </p>";
 						}
 	 				} 
+	 				elseif ($tab == "joinNetwork") {
+	 					//display all networks
+	 					echo "<h2>Your networks</h2>";
+	 					$networkIDQuery = mysql_query("SELECT * FROM user_in_net WHERE userid = '".$_SESSION['userID']."'");
+	 					if (!$networkIDQuery) {
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
+						while ($row = mysql_fetch_assoc($networkIDQuery)) {
+							$netID = $row['netid'];
+							$networkQuery = mysql_query("SELECT * from network WHERE netid = '".$netID."'");
+							$network = mysql_fetch_assoc($networkQuery);
+							$networkName = $network['networkName'];
+							$networkDescription = $network['description'];
+							echo "<p> <b>$networkName</b>:</p>";
+							echo "<p> $networkDescription </p>";
+						}
+						?>
+						<form method="post" action="profile.php?tab=addNetwork" name="registerform"
+						id="registerform">
+						<input type="submit" name="addNetwork" id="addNetwork" value="Add network" />
+						</form>
+						<?php
+	 				}
+	 				elseif ($tab == "addNetwork") { ?>
+						<p>Create a new network.</p>
+						
+						<form method="post" action="profile.php?tab=submitNetwork" name="registerform"
+						id="registerform">
+						<fieldset>
+						<label for="networkName">Network name:</label>
+						<input type="text" name="networkName" id="networkName" /><br />
+						<label for="networkDescription">Description:</label>
+						<textarea name="networkDescription" cols=16 rows=4></textarea> 
+						<input type="submit" name="edit" id="edit" value="Add" />
+						</fieldset>
+						</form>
+					<?php
+	 				}
+	 				elseif ($tab == "submitNetwork") {
+	 					if(!empty($_POST['networkName']) && !empty($_POST['networkDescription'])) {
+							$userid = $_SESSION['userID'];
+							$networkName = mysql_real_escape_string($_POST['networkName']);
+							$networkDescription = mysql_real_escape_string($_POST['networkDescription']);
+							
+							$result = mysql_query("INSERT INTO network (networkName, description)
+													VALUES('".$networkName."', '".$networkDescription."')");
+							if ($result) {
+								$networkIDQuery = mysql_query("SELECT * FROM network WHERE networkName = '".$networkName."' AND description = '".$networkDescription."'");
+					        	$row = mysql_fetch_array($networkIDQuery);
+					        	$networkID = $row['netid'];
+					        	
+					        	$networkInsertQuery = mysql_query("INSERT INTO user_in_net VALUES ('".$userid."', '".$networkID."')");
+					        	
+								echo "<h1>A new network has been created.</h1>";
+								echo "<p>We are now redirecting you to the network page.</p>";
+								echo "<meta http-equiv='refresh' content='1.5;profile.php?tab=joinNetwork' />";
+							} else { 
+								echo "<p> insert profile query failed </p>";
+							}
+						} else { ?>
+							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
+							<input type="submit" name="edit" id="edit" value="Add Network" />
+							</form>
+							<p>You did not fill in all fields.</p>
+						<?php 	
+						}
+	 				}
 	 				elseif ($tab == "addTrain") {
 	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time_hr']) && !empty($_POST['meeting_time_min']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) ) {
 							$trainName = mysql_real_escape_string($_POST['train_name']);
@@ -197,7 +266,7 @@
 						}
 						elseif(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email'])) {
 							 ?>
-							 <h1>Add Train</h1>
+							 <h2>Add Train</h2>
 							 <p>Please enter your details below to add a train.</p>
 				
 							 <form method="post" action="profile.php?tab=addTrain" name="registerform"
@@ -228,6 +297,15 @@
 									<input type="text" name="seat_available" id="seat_available" /><br /> 
 									<label for="train_description">Train Description:</label>
 									<input type="text" name="train_description" id="train_description" /><br /> 
+									<label for="network">Network:</label>
+									<select name="network">
+										 <? 
+									        $result = mysql_query("SELECT * FROM network ORDER BY netid ASC") or die (mysql_error());  
+									        while ($row = mysql_fetch_assoc($result)) { 
+									            echo '<option value="'.$row['networkName'].'">'.$row['networkName'].'</option>';
+									        } 
+									    ?> 
+									</select><br />
 									<input type="submit" name="add" id="add" value="Add Train" />
 								</fieldset>
 							</form>

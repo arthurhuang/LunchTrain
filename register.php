@@ -32,8 +32,25 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
      	$registerquery = mysql_query("INSERT INTO users (email, password, firstname, lastname) VALUES('".$email."', '".$password."', '".$firstName."', '".$lastName."')");
         if($registerquery)
         {
-        	echo "<h1>Success</h1>";
-        	echo "<p>Your account was successfully created. Please <a href=\"index.php\">click here to login</a>.</p>";
+        	$userIDQuery = mysql_query("SELECT userid FROM users WHERE email = '".$email."'");
+        	$row = mysql_fetch_array($userIDQuery);
+        	$userID = $row['userid'];
+        	$allNetworkID = 1;
+        	
+        	$addToAllNetworkQuery = mysql_query("INSERT INTO user_in_net VALUES ('".$userID."', '".$allNetworkID."')");
+        	if (!$addToAllNetworkQuery) {
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+			}
+        	if($addToAllNetworkQuery) {
+        		echo "<h1>Success</h1>";
+        		echo "<p>Your account was successfully created. Please <a href=\"index.php\">click here to login</a>.</p>";
+        	} else {
+        		echo $userID;
+        		echo $allNetworkID;
+        		echo "<h1>Something went wrong</h1>";
+        		echo "<p>Please <a href=\"index.php\">click here to try again</a>.</p>";
+        	}
         }
         else
         {
