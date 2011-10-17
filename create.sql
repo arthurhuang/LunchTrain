@@ -106,4 +106,13 @@ CREATE TABLE IF NOT EXISTS profiles (
        favoriteFood varchar(75),
        favoriteRestaurant varchar(50)
 ) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS user_in_train (
+		userid INT NOT NULL PRIMARY KEY,
+		FOREIGN KEY(userid) REFERENCES Users(userid),
+		trainid INT NOT NULL PRIMARY KEY,
+		FOREIGN KEY(trainid) REFERENCES Trains(trainid),
+		creator BOOLEAN default 0,
+		attending BOOLEAN default 0
+); ENGINE=InnoDB;
+
 COMMIT;
