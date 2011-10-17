@@ -8,13 +8,7 @@
 </head>  
 <body>
 <div id="body">
-	 	<div id="topbar">
-	 		<div id="topbartitle"><a href="profile.php">LunchTrain</a>
-	 		</div>
-	 		<div id="topbarlogout">
-	 			<a href="logout.php">Logout</a> 
-	 		</div>
-	 	</div>
+	 	
 	 	<div id="leftsidebar">
 			 <div id="leftsidebarpic">
 	 		</div>
@@ -22,6 +16,14 @@
 	 			<?php echo "<p> {$_SESSION['firstName']} {$_SESSION['lastName']} </p>" ?>
 	 			<p> <a href="profile.php?tab=addTrain">Add Train</a></p>
 	 			<p> <a href="profile.php?tab=joinNetwork">Join Network</a></p>
+	 			<p> <b>Trains I'm In</b> </p>
+	 			<?php 
+	 			$userId = $_SESSION['userID'];
+	 			$trainsImIn = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."'");
+	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
+	 				echo "<p> Train name:  {$row['trainid']}  </p>";
+	 			}
+	 			?>
 	 		</div>
 			 <div id="leftsidebarinfo">
 	 		</div>
@@ -39,6 +41,27 @@
 	 			<?php 
 					$tab = $_GET['tab'];
 					if ($tab == "viewTrains" || $tab == "") {
+						$join = $_GET['join'];
+						if ($join != null) {
+							$userId = $_SESSION['userID'];
+							$trainId = $join;
+							$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid)
+																	VALUES('".$userId."', '".$trainId."')");
+							if (!$joinTrain) {
+								echo "fail";
+							}
+						}
+						
+						$leave = $_GET['leave'];
+						if ($leave != null) {
+							$userId = $_SESSION['userID'];
+							$trainId = $leave;
+							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
+							if (!$leaveTrain) {
+								echo "fail";
+							}
+						}
+						
 						echo "<h2>Current trains:</h2>";
 						$result = mysql_query("SELECT * FROM trains");
 						if (!$result) {
@@ -46,13 +69,43 @@
 							die($message);
 						}
 						while ($row = mysql_fetch_assoc($result)) {
-							echo "<p> <b>Train name</b>: {$row['trainName']} </p>";
-						    echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
-						    echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
-						    echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
-						    echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
-						    echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
-						    echo "<br>";
+						?>
+							<div id="trainslot">
+								<div id="slotinfo">
+									<?php 
+									echo "<p> <b>Train name</b>:  {$row['trainName']} </p>";
+						    		echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
+						    		echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
+						    		echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
+						    		echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
+						    		echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
+						    		echo "<br>";
+						    		?>
+						    	</div>
+						 		<div id="slotoptions">
+						 		
+									<?php 
+									$userId = $_SESSION['userID'];
+									$trainId = $row['trainId'];
+									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
+									if (mysql_num_rows($userAlreadyInTrain) == 1) {
+										$href = "profile.php?tab=viewTrains&leave=".$trainId; ?>
+										<form method="post" action="<?= $href ?>" name="leave" id="leavetrain">
+										<input type="submit" name="leave" id="leave" value="Leave Train" />
+										</form>
+						 			<?php
+									} else { 
+										$href = "profile.php?tab=viewTrains&join=".$trainId;
+										?>
+										<form method="post" action="<?= $href ?>" name="join" id="jointrain">
+										<input type="submit" name="join" id="join" value="Join Train" />
+										</form>
+									<?php 
+									}
+									?>
+						 		</div>
+						 	</div>
+						<?php 
 						}
 					}
 					elseif ($tab == "aboutMe") {

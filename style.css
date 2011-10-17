@@ -15,76 +15,94 @@ a:hover, a:active, a:visited {
 	background-color:#F5F6F6;
 }
 #topbar {
-width:100%;
-height:30px;
-background:#eee;
-font-family:Helvetica;
-font-size:17px;
+	width:100%;
+	height:30px;
+	background:#eee;
+	font-family:Helvetica;
+	font-size:17px;
+	background-color: #B4CDCD;
+	border-bottom: 1px solid #8DB6CD;
+
 }
 #topbartitle{
-width:800px;
-height:20px;
-margin-left:200px;
-font-weight:bold;
-padding: 8px 0px 0px 0px;
-float:left;
+	width:800px;
+	height:20px;
+	margin-left:200px;
+	padding: 8px 0px 0px 0px;
+	float:left;
+	color:#333;
+	text-decoration:none;
 }
 
 #topbarlogout{
-width:100%;
-height:20px;
-padding: 8px 0px 0px 0px;
+	width:100%;
+	height:20px;
+	padding: 8px 0px 0px 0px;
 }
 #leftsidebar {
-width:154px;
-height:100%;
-float:left;
-padding-left:200px;
-border-right: 1px solid #999;
-background:#fff;
+	width:154px;
+	height:100%;
+	float:left;
+	padding-left:200px;
+	border-right: 1px solid #999;
+	background:#fff;
 }
 #name {
-height:100%;
+	height:100%;
 }
 #leftsidebarpic {
-height:150px;
-background-image: url('images/profilepic.jpg');
-background-repeat: no-repeat;
+	height:150px;
+	background-image: url('images/profilepic.jpg');
+	background-repeat: no-repeat;
 }
 #leftsidebarinfo {
-height:300px;
+	height:300px;
 }
 
 
 #right{
-width:886px;
-height:100%;
-float:left;
-margin-left:0px;
-background:#eee;
+	width:886px;
+	height:100%;
+	float:left;
+	margin-left:0px;
 
 }
 
 #background {
-background: url('images/box.jpg') top center;
-opacity: .1;
-height: 100%;
-width: 100%;
-position: fixed;
-top: 0;
-left: 0;
+	background: url('images/box.jpg') top center;
+	opacity: .1;
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
 
 }
 #righttitle{
-height:40px;
-background-color:#222;
+	height:40px;
+	background-color:#222;
 }
 
 #rightbody{
-height:100%;
+	height:100%;
 }
 #rightbottom{
-	
+	margin-left:5px;
+}
+#trainslot {
+}
+#slotinfo {
+	float:left;
+	width:500px;
+}
+#slotoptions {
+	float:left;
+	width:100px;
+}
+#slotjoin {
+	border: 1px solid #444;
+	width:60px;
+	height:15px;
 }
 
 
@@ -128,9 +146,10 @@ height:100%;
 #header li:last-child a {
   margin-right: 0;
 }
-#header li.active a, #header li a:hover {
-  border-left: 1px solid #ff5b01;
+#header li.active a, #header li a:hover{
+  border-top: 2px solid #ff5b01;
   background-color: #333;
+  height:27px;
 }
 
 

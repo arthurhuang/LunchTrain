@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS profiles (
        favoriteFood varchar(75),
        favoriteRestaurant varchar(50)
 ) ENGINE=InnoDB;
-
 -- Instantiate some default values
 INSERT INTO network (networkName, description) VALUES ('All', 'Public to everyone');
+
 COMMIT;
