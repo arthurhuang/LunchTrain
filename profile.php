@@ -209,14 +209,17 @@
 						}
 	 				} 
 	 				elseif ($tab == "addTrain") {
-	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) ) {
+	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time_hr']) && !empty($_POST['meeting_time_min']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) ) {
 							$trainName = mysql_real_escape_string($_POST['train_name']);
-							$meetingTime = mysql_real_escape_string($_POST['meeting_time']);
+							$meetingTimeHr = intval(mysql_real_escape_string($_POST['meeting_time_hr']));
+							$meetingTimeMin = intval(mysql_real_escape_string($_POST['meeting_time_min']));
+							$meetingTimeAmpm = mysql_real_escape_string($_POST['ampm']);
 							$meetingPlace = mysql_real_escape_string($_POST['meeting_place']);
 							$seatAvailable = intval(mysql_real_escape_string($_POST['seat_available']));
 							$transportationType = mysql_real_escape_string($_POST['transportation_type']);
 							$trainDescription = mysql_real_escape_string($_POST['train_description']);
 							
+							$meetingTime = $meetingTimeHr*100 + $meetingTimeMin; 
 							$trainquery = mysql_query("INSERT INTO trains (spaceAvailable, transportType, trainDescription, 
 													  meetingPlace, departureTime, trainName) 
 													  VALUES('".$seatAvailable."', '".$transportationType."', '".$trainDescription."', '".$meetingPlace."', '".$meetingTime."', '".$trainName."')");
@@ -266,11 +269,11 @@
 									<br /> 
 									<label for="transportation_type">Transportation Type:</label>
 									<select name="transportation_type">
-										<option value="driving">Driving</option>
-										<option value="walking">Walking</option>
-										<option value="biking">Biking</option>
-										<option value="public">Public Transportation</option>
-										<option value="other">Other</option>
+										<option value="Driving">Driving</option>
+										<option value="Walking">Walking</option>
+										<option value="Biking">Biking</option>
+										<option value="Public">Public Transportation</option>
+										<option value="Other">Other</option>
 									</select><br />
 									<label for="meeting_place">Meeting Place:</label>
 									<input type="text" name="meeting_place" id="meeting_place" /><br />
