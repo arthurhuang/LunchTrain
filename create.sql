@@ -1,14 +1,17 @@
 BEGIN;
 
-DROP TABLE IF EXISTS network;
 DROP TABLE IF EXISTS user_in_train;
+DROP TABLE IF EXISTS user_friends;
+DROP TABLE IF EXISTS train_in_net;
 DROP TABLE IF EXISTS train_to_loc;
 DROP TABLE IF EXISTS user_send_msg;
 DROP TABLE IF EXISTS user_in_net;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS trains; 
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS network;
+DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS users;
 
 
 -- store all the users who have registered.
@@ -29,12 +32,13 @@ CREATE TABLE IF NOT EXISTS trains (
         meetingPlace CHAR(255) NOT NULL,
         departureTime INT NOT NULL,
         private BOOLEAN NOT NULL default 0,
-	trainName varchar(50)
+        trainName varchar(50)
 ) ENGINE=InnoDB;
 
 -- stores network information
 CREATE TABLE IF NOT EXISTS network (
         networkName VARCHAR(30),
+        description VARCHAR(30),
         netid INT NOT NULL AUTO_INCREMENT PRIMARY KEY
 ) ENGINE=InnoDB;
 
@@ -61,8 +65,9 @@ CREATE TABLE IF NOT EXISTS messages(
 -- stores relationship information between users and trains
 CREATE TABLE IF NOT EXISTS user_in_train (
         userid INT NOT NULL,
-        FOREIGN KEY (userid) REFERENCES users(userid),
         trainid INT NOT NULL,
+        PRIMARY KEY (userid, trainid),
+        FOREIGN KEY (userid) REFERENCES users(userid),
         FOREIGN KEY (trainid) REFERENCES trains(trainid),
         creator BOOLEAN default 0,
         attending BOOLEAN default 0
@@ -70,15 +75,17 @@ CREATE TABLE IF NOT EXISTS user_in_train (
 
 -- relationship between trains and location
 CREATE TABLE IF NOT EXISTS train_to_loc (
-        trainid INT NOT NULL PRIMARY KEY,
-        FOREIGN KEY (trainid) REFERENCES trains(trainid),
+        trainid INT NOT NULL,
         locid INT NOT NULL,
+        PRIMARY KEY (trainid, locid),
+        FOREIGN KEY (trainid) REFERENCES trains(trainid),
         FOREIGN KEY(locid) REFERENCES locations(locid)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS user_send_msg (
         userid INT NOT NULL,
         msgid INT NOT NULL,
+        PRIMARY KEY (userid, msgid),
         FOREIGN KEY (userid) REFERENCES users(userid),
         FOREIGN KEY (msgid) REFERENCES messages(msgID)
 ) ENGINE=InnoDB;
@@ -86,8 +93,34 @@ CREATE TABLE IF NOT EXISTS user_send_msg (
 CREATE TABLE IF NOT EXISTS user_in_net (
         userid INT NOT NULL,
         netid INT NOT NULL,
+        PRIMARY KEY (userid, netid),
         FOREIGN KEY (userid) REFERENCES users(userid),
         FOREIGN KEY (netid) REFERENCES network(netid)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS train_in_net (
+        trainid INT NOT NULL,
+        netid INT NOT NULL,
+        PRIMARY KEY (trainid, netid),
+        FOREIGN KEY (trainid) REFERENCES trains(trainid),
+        FOREIGN KEY (netid) REFERENCES network(netid)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS user_friends (
+       userid INT NOT NULL,
+       friendid INT NOT NULL,
+       PRIMARY KEY (userid, friendid),
+       FOREIGN KEY (userid) REFERENCES users(userid),
+       FOREIGN KEY (friendid) REFERENCES users(userid)
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS profiles (
+       email varchar(50) not null primary key,
+       employment varchar(50),
+       education varchar(75),
+       favoriteFood varchar(75),
+       favoriteRestaurant varchar(50)
+) ENGINE=InnoDB;
+-- Instantiate some default values
+INSERT INTO network (networkName, description) VALUES ('All', 'Public to everyone');
 
 COMMIT;
