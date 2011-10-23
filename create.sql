@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS trains (
         meetingPlace CHAR(255) NOT NULL,
         departureTime INT NOT NULL,
         private BOOLEAN NOT NULL default 0,
-	trainName varchar(50)
+        trainName varchar(50)
 ) ENGINE=InnoDB;
 
 -- stores network information
