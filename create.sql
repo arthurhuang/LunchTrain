@@ -4,8 +4,9 @@ DROP TABLE IF EXISTS user_in_train;
 DROP TABLE IF EXISTS user_friends;
 DROP TABLE IF EXISTS train_in_net;
 DROP TABLE IF EXISTS train_to_loc;
-DROP TABLE IF EXISTS user_send_msg;
+DROP TABLE IF EXISTS user_msg;
 DROP TABLE IF EXISTS user_in_net;
+DROP TABLE IF EXISTS train_invite;
 DROP TABLE IF EXISTS trains; 
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS locations;
@@ -82,7 +83,7 @@ CREATE TABLE IF NOT EXISTS train_to_loc (
         FOREIGN KEY(locid) REFERENCES locations(locid)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS user_send_msg (
+CREATE TABLE IF NOT EXISTS user_msg (
         userid INT NOT NULL,
         msgid INT NOT NULL,
         PRIMARY KEY (userid, msgid),
@@ -113,6 +114,17 @@ CREATE TABLE IF NOT EXISTS user_friends (
        FOREIGN KEY (userid) REFERENCES users(userid),
        FOREIGN KEY (friendid) REFERENCES users(userid)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS train_invite (
+       sourceid INT NOT NULL,
+       destid INT NOT NULL,
+       trainid INT NOT NULL,
+       PRIMARY KEY (sourceid, destid, trainid),
+       FOREIGN KEY (sourceid) REFERENCES users(userid),
+       FOREIGN KEY (destid) REFERENCES users(userid),
+       FOREIGN KEY (trainid) REFERENCES trains(trainid)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS profiles (
        email varchar(50) not null primary key,
        employment varchar(50),
