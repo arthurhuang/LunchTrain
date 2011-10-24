@@ -8,21 +8,33 @@
 </head>  
 <body>
 <div id="body">
-	 	
+	 	<div id="topbar">
+	 		<div id="topbarline">
+	 		</div>
+	 		<div id="topbartitle">
+	 		</div>
+	 	</div>
 	 	<div id="leftsidebar">
 			 <div id="leftsidebarpic">
 	 		</div>
 	 		<div id="name">
 	 			<?php echo "<p> {$_SESSION['firstName']} {$_SESSION['lastName']} </p>" ?>
-	 			<p> <a href="profile.php?tab=addTrain">Add Train</a></p>
+	 			<br></br>
 	 			<p> <b>Trains I'm In</b> </p>
 	 			<?php 
 	 			$userId = $_SESSION['userID'];
 	 			$trainsImIn = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."'");
+	 			
 	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
-	 				echo "<p> Train name:  {$row['trainid']}  </p>";
+	 				$trainId = $row['trainid'];
+	 				$train = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'");
+	 				$trainrow = mysql_fetch_assoc($train);
+	 				echo "<p> {$trainrow['trainName']}  </p>";
 	 			}
 	 			?>
+	 			<form method="post" action="profile.php?tab=addTrain" name="add" id="addtrain">
+				<input type="image" src="images/add.png" name="image" width="101" height="27">
+				</form>
 	 		</div>
 			 <div id="leftsidebarinfo">
 	 		</div>
@@ -34,7 +46,13 @@
 	 					<li><a href="profile.php?tab=viewTrains">Trains</a></li>
 	 					<li><a href="profile.php?tab=aboutMe">About Me</a></li>
 			 			<li><a href="profile.php?tab=friends">Friends</a></li>
+			 			
 	 				</header>
+	 				<div id="logout">
+	 					<form method="post" action="logout.php" name="logout" id="logout">
+							<input type="submit" name="logout" id="logout" value="Logout" />
+						</form>
+	 				</div>
 	 			</div>
 	 			<div id="rightbottom">
 	 			<?php 
@@ -61,7 +79,7 @@
 							}
 						}
 						
-						echo "<h2>Current trains:</h2>";
+						
 						$result = mysql_query("SELECT * FROM trains");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -72,38 +90,39 @@
 							<div id="trainslot">
 								<div id="slotinfo">
 									<?php 
-									echo "<p> <b>Train name</b>:  {$row['trainName']} </p>";
-						    		echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
-						    		echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
-						    		echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
-						    		echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
-						    		echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
-						    		echo "<br>";
+									echo "<p> <b>{$row['trainName']}</b> </p>";
+						    		echo "<p> Departing at {$row['departureTime']} at location {$row['meetingPlace']}</p>";
+						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$row['trainDescription']} </p>";
+						    		
 						    		?>
 						    	</div>
+						    	
 						 		<div id="slotoptions">
 						 		
 									<?php 
 									$userId = $_SESSION['userID'];
-									$trainId = $row['trainId'];
+									$trainId = $row['trainid'];
 									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
 										$href = "profile.php?tab=viewTrains&leave=".$trainId; ?>
 										<form method="post" action="<?= $href ?>" name="leave" id="leavetrain">
-										<input type="submit" name="leave" id="leave" value="Leave Train" />
+										<input type="image" src="images/leave.png" name="image" width="71" height="27">
 										</form>
+										
 						 			<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&join=".$trainId;
 										?>
 										<form method="post" action="<?= $href ?>" name="join" id="jointrain">
-										<input type="submit" name="join" id="join" value="Join Train" />
+										<input type="image" src="images/join.png" name="image" width="56" height="27">
 										</form>
 									<?php 
 									}
 									?>
 						 		</div>
 						 	</div>
+						 	<p>.</p>
 						<?php 
 						}
 					}
