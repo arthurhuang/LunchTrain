@@ -8,30 +8,43 @@
 </head>  
 <body>
 <div id="body">
-	 	
+	 	<div id="topbar">
+	 		<div id="topbarline">
+	 		</div>
+	 		<div id="topbartitle">
+	 		</div>
+	 	</div>
 	 	<div id="leftsidebar">
-			 <div id="leftsidebarpic">
+			<div id="leftsidebarpic">
 	 		</div>
 	 		<div id="name">
+
 	 			<?php echo "<p><b> {$_SESSION['firstName']} {$_SESSION['lastName']} </b></p>" ?>
-	 			<p> <a href="profile.php?tab=addTrain">Add Train</a></p>
 	 			<p> <a href="profile.php?tab=viewNetwork">Join Network</a></p>
+	 			<br></br>
 	 		</div>
-			 <div id="leftsidebarinfo">
-			 	<p> <b>Trains I'm In</b> </p>
+			<div id="leftsidebarinfo">
+				<p><b>Trains I'm In:</b>  </p>
 	 			<?php 
 	 			$userId = $_SESSION['userID'];
 	 			$trainsImIn = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."'");
+	 			
 	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
-	 				$trainNameQuery = mysql_query("SELECT trainName FROM trains WHERE trainid = '".$row['trainid']."'");
-	 				$trainName = mysql_fetch_assoc($trainNameQuery);
-	 				echo "<p> {$trainName['trainName']}  </p>";
-	 			}
-	 			?>
+	 				$trainId = $row['trainid'];
+	 				$train = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'");
+	 				$trainrow = mysql_fetch_assoc($train);
+	 				echo "<p> {$trainrow['trainName']}  </p>"; 
+				}?>
+
+	 			<form method="post" action="profile.php?tab=addTrain" name="add" id="addtrain">
+				<input type="image" src="images/add.png" name="image" width="101" height="27">
+				</form>
 	 		</div>
+			 
 	 	</div>
 	 	<div id="right">
 	 		<div id="rightbody">
+				
 				<div id="righttitle">
 	 				<header id="header">
 	 					<li><a href="profile.php?tab=viewTrains">Trains</a></li>
@@ -39,11 +52,18 @@
 			 			<li><a href="profile.php?tab=friends">Friends</a></li>
 			 			<li><a href="profile.php?tab=inbox">Inbox</a></li>
 	 				</header>
+	 				<div id="logout">
+	 					<form method="post" action="logout.php" name="logout" id="logout">
+							<input type="submit" name="logout" id="logout" value="Logout" />
+						</form>
+	 				</div>
 	 			</div>
+	 			
 	 			<div id="rightbottom">
 	 			<?php 
 					$tab = $_GET['tab'];
 					$userId = $_SESSION['userID'];
+
 					if ($tab == "viewTrains" || $tab == "") {
 						$join = $_GET['joinTrain'];
 						if ($join != null) {
@@ -71,7 +91,6 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
 						}
 						
-						echo "<h2>Current trains:</h2>";
 						$result = mysql_query("SELECT * FROM trains");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -79,19 +98,16 @@
 						}
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
-							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
-							
-						?>
+							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
+							?>
 							<div id="trainslot">
 								<div id="slotinfo">
 									<?php 
-									echo "<p> <b>Train name</b>:  {$row['trainName']} </p>";
-						    		echo "<p> <b>Departure time</b>: {$row['departureTime']} </p>";
-						    		echo "<p> <b>Meeting place</b>: {$row['meetingPlace']} </p>";
-						    		echo "<p> <b>Transportation</b>: {$row['transportType']} </p>";
-						    		echo "<p> <b>Saces available</b>: {$row['spaceAvailable']} </p>";
-						    		echo "<p> <b>Train description</b>: {$row['trainDescription']} </p>";
-						    		echo "<p> <b>Networks</b>: ";
+									echo "<p> <b>{$row['trainName']}</b> </p>";
+						    		echo "<p> Departing at {$row['departureTime']} from {$row['meetingPlace']}</p>";
+						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$row['trainDescription']} </p>";
+						    		echo "<p>Networks: "; 
 						    		if(!$netQuery) {
 						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
 										die($message);
@@ -102,7 +118,9 @@
 						    		}
 						    		echo "</p>";
 						    		echo "<br>";
-						    		?>
+						    		
+						    		 ?>
+						    		
 						    	</div>
 						 		<div id="slotoptions">
 									<?php 
@@ -112,24 +130,25 @@
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
 										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="submit" name="leave" id="leave" value="Leave Train" />
+										<input type="image" src="images/leave.png" name="image" width="71" height="27">
 										</form>
 										
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="submit" name="invite" id="invite" value="Invite friends" />
+										<input type="submit" name="invite" id="invite" value="Invite friends">
 										</form>
-						 			<?php
+									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
-										<input type="submit" name="join" id="join" value="Join Train" />
+										<input type="image" src="images/join.png" name="image" width="56" height="27">
 										</form>
 									<?php 
 									}
 									?>
 						 		</div>
 						 	</div>
+						 	<p>.</p>
 						<?php 
 						}
 					}
@@ -139,7 +158,10 @@
 						if($trainID != null && $friendID == null) {
 							//Display friends to invite
 							//Get all users who are NOT this user, and who are friends, and who are NOT already invited, and who are NOT already attending on this train
-							echo "<h2>Invite friends to train $trainID </h2>";
+							$trainNameQuery = mysql_query("SELECT trainName FROM trains WHERE trainid = '".$trainID."'");
+							$row = mysql_fetch_assoc($trainNameQuery);
+							
+							echo "<h2>Invite friends to join {$row['trainName']} </h2>";
 							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."' 
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$_SESSION['userID']."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
@@ -236,6 +258,30 @@
 							}
 							$trainName = mysql_fetch_assoc($getTrainNameQuery);
 							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
+							?>
+							<div id="trainslot">
+								<div id="slotinfo">
+								<?php 
+								
+									echo "<p> <b>{$trainName['trainName']}</b> </p>";
+						    		echo "<p> Departing at {$trainName['departureTime']} from {$trainName['meetingPlace']}</p>";
+						    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
+						    		echo "<p>Networks: "; 
+						    		if(!$netQuery) {
+						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+										die($message);
+						    		}
+						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+						    			$networkName = $netQueryRow['networkName'];
+						    			echo "$networkName. ";
+						    		}
+						    		echo "</p>";
+						    		echo "<br>";
+						    		?>
+						    	</div>
+						    	<?php 
+						    /*	
 							echo "<p> <b>Train name</b>:  {$trainName['trainName']} </p>";
 				    		echo "<p> <b>Departure time</b>: {$trainName['departureTime']} </p>";
 				    		echo "<p> <b>Meeting place</b>: {$trainName['meetingPlace']} </p>";
@@ -252,15 +298,19 @@
 				    			echo "$networkName. ";
 				    		}
 				    		echo "</p>";
+				    		*/
 				    		$acceptLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=True";
 				    		$declineLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=False";
 							?>
+							<div id="slotoptions">
 							<form method="post" action="<?php echo $acceptLink ?>" name="acc" id="acc">
 							<input type="submit" name="acc" id="acc" value="Accept" />
 							</form>
 							<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
 							<input type="submit" name="dec" id="dec" value="Decline" />
 							</form>
+							</div>
+							</div>
 							<?php 
 				    		echo "<br>";
 						}
@@ -287,7 +337,6 @@
 					} 
 					elseif ($tab == "editProfile") { ?>
 						<p>Please enter your information below to edit your profile.</p>
-						
 						<form method="post" action="profile.php?tab=submitProfile" name="registerform"
 						id="registerform">
 						<fieldset>
@@ -637,12 +686,17 @@
 									<input type="submit" name="add" id="add" value="Add Train" />
 								</fieldset>
 							</form>
-							</div>
-							 <?php }
-	 				} ?>
+					</div>
+					<?php 
+						}
+	 				}
+	 			 ?>
 	 		</div>
 	 		</div>
 	 	</div>
-	 </div>
 </body>
 </html>
+
+
+
+
