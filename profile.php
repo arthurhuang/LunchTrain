@@ -1,4 +1,6 @@
-<?php include "base.php";?>
+<?php 
+	include "base.php";
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">  
 <head>  
@@ -61,6 +63,9 @@
 	 			
 	 			<div id="rightbottom">
 	 			<?php 
+	 				if(empty($_SESSION['LoggedIn']) && empty($_SESSION['Email'])) {
+	 					echo "<meta http-equiv='refresh' content='0;index.php' />";
+	 				}
 					$tab = $_GET['tab'];
 					$userId = $_SESSION['userID'];
 
@@ -134,7 +139,7 @@
 										</form>
 										
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="submit" name="invite" id="invite" value="Invite friends">
+										<input type="image" src="images/invite.png" name="invite" width="80" height="27">
 										</form>
 									<?php
 									} else { 
@@ -303,12 +308,14 @@
 				    		$declineLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=False";
 							?>
 							<div id="slotoptions">
-							<form method="post" action="<?php echo $acceptLink ?>" name="acc" id="acc">
-							<input type="submit" name="acc" id="acc" value="Accept" />
+							
+							<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+							<input type="image" src="images/accept.png" name="invite" width="80" height="27">
 							</form>
-							<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-							<input type="submit" name="dec" id="dec" value="Decline" />
+							<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+							<input type="image" src="images/decline.png" name="invite" width="80" height="27">
 							</form>
+							
 							</div>
 							</div>
 							<?php 
