@@ -60,15 +60,17 @@
 	 			</div>
 	 			
 	 			<div id="rightbottom">
-	 				<?php 
+	 			<?php 
 					$tab = $_GET['tab'];
+					$userId = $_SESSION['userID'];
+
 					if ($tab == "viewTrains" || $tab == "") {
 						$join = $_GET['joinTrain'];
 						if ($join != null) {
-							$userId = $_SESSION['userID'];
 							$trainId = $join;
-							$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid)
-																	VALUES('".$userId."', '".$trainId."')");
+							$attending = 1;
+							$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
+																	VALUES('".$userId."', '".$trainId."', '".$attending."')");
 							if (!$joinTrain) {
 								echo "<p>Unable to join train.</p>";
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -79,7 +81,6 @@
 						
 						$leave = $_GET['leaveTrain'];
 						if ($leave != null) {
-							$userId = $_SESSION['userID'];
 							$trainId = $leave;
 							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
 							if (!$leaveTrain) {
@@ -103,12 +104,11 @@
 								<div id="slotinfo">
 									<?php 
 									echo "<p> <b>{$row['trainName']}</b> </p>";
-						    		echo "<p> Departing at {$row['departureTime']} at location {$row['meetingPlace']}</p>";
+						    		echo "<p> Departing at {$row['departureTime']} from {$row['meetingPlace']}</p>";
 						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$row['trainDescription']} </p>";
-						    		echo "<p> <b>Networks</b>: "; ?>
-						    		
-						    		/*if(!$netQuery) {
+						    		echo "<p>Networks: "; 
+						    		if(!$netQuery) {
 						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
 										die($message);
 						    		}
@@ -117,24 +117,30 @@
 						    			echo "$networkName. ";
 						    		}
 						    		echo "</p>";
-						    		echo "<br>"; ?>*/
+						    		echo "<br>";
+						    		
+						    		 ?>
+						    		
 						    	</div>
-						    	
 						 		<div id="slotoptions">
 									<?php 
-									$userId = $_SESSION['userID'];
 									$trainId = $row['trainid'];
 									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
-										$href = "profile.php?tab=viewTrains&leave=".$trainId; ?>
-										<form method="post" action="<?= $href ?>" name="leave" id="leavetrain">
+										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
+										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
 										<input type="image" src="images/leave.png" name="image" width="71" height="27">
+										</form>
+										
+										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+										<input type="submit" name="invite" id="invite" value="Invite friends">
 										</form>
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
-										<form method="post" action="<?= $href ?>" name="join" id="jointrain">
+										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
 										<input type="image" src="images/join.png" name="image" width="56" height="27">
 										</form>
 									<?php 
@@ -144,6 +150,169 @@
 						 	</div>
 						 	<p>.</p>
 						<?php 
+						}
+					}
+					elseif ($tab == "invite") {
+						$trainID = $_GET['trainID'];
+						$friendID = $_GET['friendID'];
+						if($trainID != null && $friendID == null) {
+							//Display friends to invite
+							//Get all users who are NOT this user, and who are friends, and who are NOT already invited, and who are NOT already attending on this train
+							$trainNameQuery = mysql_query("SELECT trainName FROM trains WHERE trainid = '".$trainID."'");
+							$row = mysql_fetch_assoc($trainNameQuery);
+							
+							echo "<h2>Invite friends to join {$row['trainName']} </h2>";
+							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."' 
+													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$_SESSION['userID']."')
+													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
+													AND userid NOT IN (select userid FROM user_in_train WHERE trainid = '".$trainID."')");
+							if (!$result) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							while ($row = mysql_fetch_assoc($result)) {
+								$friendid = $row['userid'];
+								$friendFirstName = $row['firstname'];
+								$friendLastName = $row['lastname'];
+								$href = "profile.php?tab=invite&trainID=$trainID&friendID=$friendid";
+								?>
+								<form method="post" action="<?php echo $href ?>" name="invF" id="invF">
+								<input type="submit" name="invF" id="invF" value="<?php echo "$friendFirstName $friendLastName" ?>" />
+								</form>
+								<?php 
+							}
+						} elseif($trainID != null && $friendID != null) {
+							//Add friend
+							$add_train_inv_query = mysql_query("INSERT INTO train_invite (sourceid, destid, trainid) 
+																VALUES ('".$userId."', '".$friendID."', '".$trainID."')");
+							if (!$add_train_inv_query) {
+								echo "<p>Unable to send invite.</p>";
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							echo "<meta http-equiv='refresh' content='0;profile.php?tab=invite&trainID=$trainID' />";
+						} else {
+							echo "Error. TrainID not specified.";
+						}
+					}
+					elseif ($tab == "inbox") {
+						$response = $_GET['accept'];
+						if($response != null) {
+							$trainID = $_GET['trainID'];
+							$sourceID = $_GET['sourceID'];
+							if($response == "True") {
+								#Accepted the invitation.
+								#Add the user to the train 
+								$attending = 1;
+								$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
+																		VALUES('".$userId."', '".$trainID."', '".$attending."')");
+								if (!$joinTrain) {
+									echo "<p>Unable to join train.</p>";
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								$removeInvite = mysql_query("DELETE from train_invite WHERE sourceid = '".$sourceID."' AND trainid = '".$trainID."' AND destid = '".$userId."'");
+								if(!$removeInvite) {
+									echo "<p>Unable to remove invite.</p>";
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								echo "<meta http-equiv='refresh' content='0;profile.php?tab=inbox' />";
+							} elseif ($response == "False") {
+								#Declined the invitation. Just delete this invitation. Maybe let sender know that invitation was declined
+								$declineInvite = mysql_query("DELETE from train_invite WHERE sourceid = '".$sourceID."' AND trainid = '".$trainID."' AND destid = '".$userId."'");
+								if (!$declineInvite) {
+									echo "<p>Unable to decline invite.</p>";
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								echo "<meta http-equiv='refresh' content='0;profile.php?tab=inbox' />";
+							} else {
+								die("Unknown response: $response");
+							}
+						}
+						echo "<h2> Invites to join trains from your friends: </h2>";
+						$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'");
+						if (!$result) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+						while ($row = mysql_fetch_assoc($result)) {
+							//Get source name
+							$sourceID = $row['sourceid'];
+							$getSourceNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$sourceID."'");
+							if(!$getSourceNameQuery) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							$sourceName = mysql_fetch_assoc($getSourceNameQuery);
+							$firstName = $sourceName['firstname'];
+							$lastName = $sourceName['lastname'];
+							echo "<p>From: $firstName $lastName</p>";
+							//Get train name
+							$trainID = $row['trainid'];
+							$getTrainNameQuery = mysql_query("SELECT * from trains WHERE trainid = '".$trainID."'");
+							if(!$getTrainNameQuery) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							$trainName = mysql_fetch_assoc($getTrainNameQuery);
+							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
+							?>
+							<div id="trainslot">
+								<div id="slotinfo">
+								<?php 
+								
+									echo "<p> <b>{$trainName['trainName']}</b> </p>";
+						    		echo "<p> Departing at {$trainName['departureTime']} from {$trainName['meetingPlace']}</p>";
+						    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
+						    		echo "<p>Networks: "; 
+						    		if(!$netQuery) {
+						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+										die($message);
+						    		}
+						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+						    			$networkName = $netQueryRow['networkName'];
+						    			echo "$networkName. ";
+						    		}
+						    		echo "</p>";
+						    		echo "<br>";
+						    		?>
+						    	</div>
+						    	<?php 
+						    /*	
+							echo "<p> <b>Train name</b>:  {$trainName['trainName']} </p>";
+				    		echo "<p> <b>Departure time</b>: {$trainName['departureTime']} </p>";
+				    		echo "<p> <b>Meeting place</b>: {$trainName['meetingPlace']} </p>";
+				    		echo "<p> <b>Transportation</b>: {$trainName['transportType']} </p>";
+				    		echo "<p> <b>Saces available</b>: {$trainName['spaceAvailable']} </p>";
+				    		echo "<p> <b>Train description</b>: {$trainName['trainDescription']} </p>";
+				    		echo "<p> <b>Networks</b>: ";
+				    		if(!$netQuery) {
+				    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+				    		}
+				    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+				    			$networkName = $netQueryRow['networkName'];
+				    			echo "$networkName. ";
+				    		}
+				    		echo "</p>";
+				    		*/
+				    		$acceptLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=True";
+				    		$declineLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=False";
+							?>
+							<div id="slotoptions">
+							<form method="post" action="<?php echo $acceptLink ?>" name="acc" id="acc">
+							<input type="submit" name="acc" id="acc" value="Accept" />
+							</form>
+							<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
+							<input type="submit" name="dec" id="dec" value="Decline" />
+							</form>
+							</div>
+							</div>
+							<?php 
+				    		echo "<br>";
 						}
 					}
 					elseif ($tab == "aboutMe") {
@@ -161,8 +330,7 @@
 							echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
 						}
 						?>
-						<form method="post" action="profile.php?tab=editProfile" name="registerform"
-						id="registerform">
+						<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
 						<input type="submit" name="edit" id="edit" value="Edit Profile" />
 						</form>
 						<?php
@@ -213,7 +381,6 @@
 	 				elseif ($tab == "friends") {
 	 					$join = $_GET['addFriend'];
 						if ($join != null) {
-							$userId = $_SESSION['userID'];
 							$friendID = $join;
 							$addFriend = mysql_query("INSERT INTO user_friends (userid, friendid)
 																	VALUES('".$userId."', '".$friendID."')");
@@ -227,7 +394,6 @@
 						
 						$delete = $_GET['leaveFriend'];
 						if ($delete != null) {
-							$userId = $_SESSION['userID'];
 							$friendID = $delete;
 							$leaveTrain = mysql_query("DELETE FROM user_friends WHERE userid='".$userId."' AND friendid='".$friendID."'");
 							if (!$leaveTrain) {
@@ -239,7 +405,7 @@
 						}
 						
 	 					echo "<h2>Friends</h2>";
-	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."'");
+	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."'");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -249,7 +415,7 @@
 							$friendFirstName = $row['firstname'];
 							$friendLastName = $row['lastname'];
 							echo "<p> $friendFirstName $friendLastName </p>";
-							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$_SESSION['userID']."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
+							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
 							if (mysql_num_rows($friendQuery) == 1) {
 								$href = "profile.php?tab=friends&leaveFriend=$friendID"; ?>
 								<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
@@ -300,11 +466,10 @@
 						*/
 	 				} 
 	 				elseif ($tab == "viewNetwork") {
-						$userID = $_SESSION['userID'];
 	 					$join = $_GET['joinN'];
 						if ($join != null) {
 							$networkID = $join;
-							$joinNetwork = mysql_query("INSERT INTO user_in_net (userid, netid) VALUES('".$userID."', '".$networkID."')");
+							$joinNetwork = mysql_query("INSERT INTO user_in_net (userid, netid) VALUES('".$userId."', '".$networkID."')");
 							if (!$joinNetwork) {
 								echo "<p>Unable to join network.</p>";
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -315,7 +480,7 @@
 						$leave = $_GET['leaveN'];
 						if ($leave != null) {
 							$networkID = $leave;
-							$leaveNetwork = mysql_query("DELETE FROM user_in_net WHERE userid = '".$userID."' AND netid = '".$networkID."'");
+							$leaveNetwork = mysql_query("DELETE FROM user_in_net WHERE userid = '".$userId."' AND netid = '".$networkID."'");
 							if (!$leaveNetwork) {
 								echo "<p>Unable to leave network.</p>";
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -325,7 +490,7 @@
 						}
 	 					//display all networks
 	 					echo "<h2>Your networks</h2>";
-	 					$networkIDQuery = mysql_query("SELECT * FROM user_in_net WHERE userid = '".$_SESSION['userID']."'");
+	 					$networkIDQuery = mysql_query("SELECT * FROM user_in_net WHERE userid = '".$userId."'");
 	 					if (!$networkIDQuery) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -347,7 +512,7 @@
 						}
 						echo "<br>";
 						echo "<h2>Networks you can join</h2>";
-						$notMemberNetworkIDQuery = mysql_query("SELECT netid FROM network WHERE netid NOT IN (SELECT netid FROM user_in_net WHERE userid = '".$_SESSION['userID']."')");
+						$notMemberNetworkIDQuery = mysql_query("SELECT netid FROM network WHERE netid NOT IN (SELECT netid FROM user_in_net WHERE userid = '".$userId."')");
 						if (!$notMemberNetworkIDQuery) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -392,10 +557,8 @@
 	 				}
 	 				elseif ($tab == "submitNetwork") {
 	 					if(!empty($_POST['networkName']) && !empty($_POST['networkDescription'])) {
-							$userid = $_SESSION['userID'];
 							$networkName = mysql_real_escape_string($_POST['networkName']);
 							$networkDescription = mysql_real_escape_string($_POST['networkDescription']);
-							
 							$result = mysql_query("INSERT INTO network (networkName, description)
 													VALUES('".$networkName."', '".$networkDescription."')");
 							if ($result) {
@@ -403,8 +566,10 @@
 					        	$row = mysql_fetch_array($networkIDQuery);
 					        	$networkID = $row['netid'];
 					        	
-					        	$networkInsertQuery = mysql_query("INSERT INTO user_in_net VALUES ('".$userid."', '".$networkID."')");
-					        	
+					        	$networkInsertQuery = mysql_query("INSERT INTO user_in_net (userid, netid) VALUES ('".$userId."', '".$networkID."')");
+					        	if(!$networkInsertQuery) {
+					        		die("Cannot insert into network");
+					        	}
 								echo "<h1>A new network has been created.</h1>";
 								echo "<p>We are now redirecting you to the network page.</p>";
 								echo "<meta http-equiv='refresh' content='1.5;profile.php?tab=viewNetwork' />";
@@ -459,7 +624,6 @@
 								$attending = 1;
 								$makeOwnerQuery = mysql_query("INSERT INTO user_in_train (userid, trainid, creator, attending) 
 																VALUES('".$userID."', '".$trainID."', '".$creator."', '".$attending."')");
-								echo "train: $trainID, net: $netID";
 								$addTrainNetworkQuery = mysql_query("INSERT INTO train_in_net (trainid, netid) VALUES ('".$trainID."', '".$netID."')");
 								if (!$makeOwnerQuery || !$addTrainNetworkQuery) {
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
