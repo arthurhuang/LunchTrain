@@ -285,73 +285,72 @@
 							} else {
 								die("Unknown response: $response");
 							}
-						}
-						echo "<h2> Invites to join trains from your friends: </h2>";
-						$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'");
-						if (!$result) {
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
-							}
-						while ($row = mysql_fetch_assoc($result)) {
-							//Get source name
-							$sourceID = $row['sourceid'];
-							$getSourceNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$sourceID."'");
-							if(!$getSourceNameQuery) {
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
-							}
-							$sourceName = mysql_fetch_assoc($getSourceNameQuery);
-							$firstName = $sourceName['firstname'];
-							$lastName = $sourceName['lastname'];
-							echo "<p>From: $firstName $lastName</p>";
-							//Get train name
-							$trainID = $row['trainid'];
-							$getTrainNameQuery = mysql_query("SELECT * from trains WHERE trainid = '".$trainID."'");
-							if(!$getTrainNameQuery) {
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
-							}
-							$trainName = mysql_fetch_assoc($getTrainNameQuery);
-							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
-							?>
-							<div id="trainslot">
-								<div id="slotinfo">
-								<?php 
+						} else {
+							echo "<h2> Invites to join trains from your friends: </h2>";
+							$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'");
+							if (!$result) {
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+							while ($row = mysql_fetch_assoc($result)) {
+								//Get source name
+								$sourceID = $row['sourceid'];
+								$getSourceNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$sourceID."'");
+								if(!$getSourceNameQuery) {
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								$sourceName = mysql_fetch_assoc($getSourceNameQuery);
+								echo "<p>From: {$sourceName['firstname']} {$sourceName['lastname']}</p>";
+								//Get train name
+								$trainID = $row['trainid'];
+								$getTrainNameQuery = mysql_query("SELECT * from trains WHERE trainid = '".$trainID."'");
+								if(!$getTrainNameQuery) {
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								$trainName = mysql_fetch_assoc($getTrainNameQuery);
+								$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
+								?>
+								<div id="trainslot">
+									<div id="slotinfo">
+									<?php 
+									
+										echo "<p> <b>{$trainName['trainName']}</b> </p>";
+							    		echo "<p> Departing at {$trainName['departureTimeHr']}:{$trainName['departureTimeMin']} {$trainName['departureTimeAMPM']} from {$trainName['meetingPlace']}</p>";
+							    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
+							    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
+							    		echo "<p>Networks: "; 
+							    		if(!$netQuery) {
+							    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+											die($message);
+							    		}
+							    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+							    			$networkName = $netQueryRow['networkName'];
+							    			echo "$networkName. ";
+							    		}
+							    		echo "</p>";
+							    		echo "<br>";
+							    		?>
+							    	</div>
+							    	<?php 
+					    		$acceptLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=True";
+					    		$declineLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=False";
+								?>
+								<div id="slotoptions">
 								
-									echo "<p> <b>{$trainName['trainName']}</b> </p>";
-						    		echo "<p> Departing at {$trainName['departureTimeHr']}:{$trainName['departureTimeMin']} {$trainName['departureTimeAMPM']} from {$trainName['meetingPlace']}</p>";
-						    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
-						    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
-						    		echo "<p>Networks: "; 
-						    		if(!$netQuery) {
-						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
-										die($message);
-						    		}
-						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
-						    			$networkName = $netQueryRow['networkName'];
-						    			echo "$networkName. ";
-						    		}
-						    		echo "</p>";
-						    		echo "<br>";
-						    		?>
-						    	</div>
-						    	<?php 
-				    		$acceptLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=True";
-				    		$declineLink = "profile.php?tab=inbox&trainID=$trainID&sourceID=$sourceID&accept=False";
-							?>
-							<div id="slotoptions">
-							
-							<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-							<input type="image" src="images/accept.png" name="invite" width="80" height="27">
-							</form>
-							<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-							<input type="image" src="images/decline.png" name="dec" width="80" height="27">
-							</form>
-							
-							</div>
-							</div>
-							<?php 
-				    		echo "<br>";
+								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
+								<input type="image" src="images/accept.png" name="invite" width="80" height="27">
+								</form>
+								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
+								<input type="image" src="images/decline.png" name="dec" width="80" height="27">
+								</form>
+								
+								</div>
+								</div>
+								<br>
+								<?php 
+							}
 						}
 					}
 					elseif ($tab == "aboutMe") {
