@@ -105,11 +105,14 @@
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
 							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
+							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
+							
 							?>
 							<div id="trainslot">
 								<div id="slotinfo">
-									<?php 
-									echo "<p> <b>{$row['trainName']}</b> </p>";
+									
+									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $row['trainName'] ?></b> </a> </p>
+									<?php
 						    		echo "<p> Departing at {$row['departureTime']} from {$row['meetingPlace']}</p>";
 						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$row['trainDescription']} </p>";
@@ -153,9 +156,7 @@
 									<?php 
 									}
 									?>
-									<form method="post" action="<?php echo $trainProfileHref ?>" name="trainProf" id="trainProf">
-									<input type="submit" name="invite" value="More Info" width="80" height="27">
-									</form>
+									
 						 		</div>
 						 	</div>
 						 	<p>.</p>
