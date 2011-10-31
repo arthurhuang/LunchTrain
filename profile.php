@@ -56,7 +56,13 @@
 	 					<li><a href="profile.php?tab=viewTrains">Trains</a></li>
 	 					<li><a href="profile.php?tab=aboutMe">About Me</a></li>
 			 			<li><a href="profile.php?tab=friends">Friends</a></li>
-			 			<li><a href="profile.php?tab=inbox">Inbox</a></li>
+			 			
+			 			<?php 
+			 			$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'"); 
+			 			$num = mysql_num_rows($result);
+			 			?>
+			 			<li><a href="profile.php?tab=inbox">Inbox <?php echo $num ?></a></li>
+			 			
 	 				</header>
 	 				<div id="logout">
 	 					<form method="post" action="logout.php" name="logout" id="logout">
