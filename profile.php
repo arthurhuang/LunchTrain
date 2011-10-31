@@ -658,10 +658,10 @@
 								$creator = 1;
 								$attending = 1;
 								$makeOwnerQuery = mysql_query("INSERT INTO user_in_train (userid, trainid, creator, attending) 
-																VALUES('".$userID."', '".$userId."', '".$creator."', '".$attending."')");
+																VALUES('".$userId."', '".$trainID."', '".$creator."', '".$attending."')");
 								$addTrainNetworkQuery = mysql_query("INSERT INTO train_in_net (trainid, netid) VALUES ('".$trainID."', '".$netID."')");
 								if (!$makeOwnerQuery || !$addTrainNetworkQuery) {
-									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									$message  = "Invalid Insert query: " . mysql_error() . "\n";
 									die($message);
 								}
 								echo "<h1>Train created</h1>";
@@ -670,7 +670,7 @@
 						       	echo "<meta http-equiv='refresh' content='1.5;profile.php' />";
 							}
 						}
-						elseif(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Email'])) {
+						else {
 							 ?>
 							 <h2>Add Train</h2>
 							 <p>Please enter your details below to add a train.</p>
