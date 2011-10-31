@@ -12,12 +12,11 @@ a:hover, a:active, a:visited {
 	text-decoration: none;
 }
 #body {
-	background-color:#F5F6F6;
+	position:relative;	
 }
 
 #topbar {
-	width:100%;
-	height:86px;
+	height:96px;
 	background-color: #fff;
 
 }
@@ -40,11 +39,15 @@ a:hover, a:active, a:visited {
 	height:20px;
 	padding: 8px 0px 0px 0px;
 }
+
+#crate {
+	position:relative;
+}
 #leftsidebar {
-	width:154px;
-	height:100%;
-	float:left;
+	width:150px;
 	padding-left:200px;
+	position:absolute;
+	float:left;
 	border-right: 3px solid #333;
 	background:#fff;
 }
@@ -62,10 +65,8 @@ a:hover, a:active, a:visited {
 
 
 #right{
-	width:886px;
-	height:100%;
-	float:left;
-	margin-left:0px;
+	position:absolute;
+	padding-left:353px
 
 }
 
@@ -221,10 +222,11 @@ label {
 }
 input {
 	font-family: Helvetica;
-    border: 0px solid #000;
+    border: 1px solid #000;
 	margin-bottom: 5px;
     background-color: #FFF;
     padding: 2px;
+    
 }
 input:hover {
 }

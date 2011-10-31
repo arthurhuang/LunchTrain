@@ -9,13 +9,14 @@
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>  
 <body>
-<div id="body">
-	 	<div id="topbar">
+<div id="crate">
+		<div id="topbar">
 	 		<div id="topbarline">
 	 		</div>
 	 		<div id="topbartitle">
 	 		</div>
 	 	</div>
+	 	
 	 	<div id="leftsidebar">
 			<div id="leftsidebarpic">
 	 		</div>
