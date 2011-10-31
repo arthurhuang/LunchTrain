@@ -66,7 +66,7 @@ a:hover, a:active, a:visited {
 
 #right{
 	position:absolute;
-	padding-left:353px
+	margin-left:353px
 
 }
 
@@ -97,10 +97,16 @@ a:hover, a:active, a:visited {
 	border: 3px dotted #666;
 	padding:3px 15px 15px 5px;
 }
+#trainslot2 {
+	height:114px;
+	width:600px;
+	border: 3px dotted #666;
+	padding:3px 15px 15px 5px;
+}
+
 #slotinfo {
 	float:left;
-	width:500px;
-	
+	width:500px;	
 }
 #slotoptions {
 	float:left;

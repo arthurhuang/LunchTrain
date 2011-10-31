@@ -180,7 +180,7 @@
 							$trainInfo = mysql_fetch_assoc($getTrainInfo);
 							$trainCreator = mysql_fetch_assoc($getTrainUserCreatorInfo);
 							?>
-							<div id="trainslot">
+							<div id="trainslot2">
 								<div id="slotinfo">
 									<?php 
 									echo "<p> <b>{$trainInfo['trainName']}</b> </p>";
