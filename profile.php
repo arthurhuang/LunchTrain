@@ -60,9 +60,14 @@
 			 			<?php 
 			 			$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'"); 
 			 			$num = mysql_num_rows($result);
-			 			?>
-			 			<li><a href="profile.php?tab=inbox">Inbox <?php echo $num ?></a></li>
-			 			
+			 			if ($num > 0) {
+			 				?>
+			 				<li><a href="profile.php?tab=inbox">Inbox (<?php echo $num ?>)</a></li>
+			 				<?php 
+			 			} else {
+			 				?>
+			 				<li><a href="profile.php?tab=inbox">Inbox</a></li>
+			 			<?php }?>
 	 				</header>
 	 				<div id="logout">
 	 					<form method="post" action="logout.php" name="logout" id="logout">
