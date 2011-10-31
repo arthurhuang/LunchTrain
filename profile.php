@@ -69,8 +69,10 @@
 	 			<?php 
 					$tab = $_GET['tab'];
 					$userId = $_SESSION['userID'];
-
-					if ($tab == "viewTrains" || $tab == "") {
+					if ($tab == "") {
+						echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+					}
+					elseif ($tab == "viewTrains") {
 						$join = $_GET['joinTrain'];
 						if ($join != null) {
 							$trainId = $join;
@@ -106,14 +108,13 @@
 							$trainID = $row['trainid'];
 							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
 							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
-							
 							?>
 							<div id="trainslot">
 								<div id="slotinfo">
 									
 									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $row['trainName'] ?></b> </a> </p>
 									<?php
-						    		echo "<p> Departing at {$row['departureTime']} from {$row['meetingPlace']}</p>";
+						    		echo "<p> Departing at {$row['departureTimeHr']}:{$row['departureTimeMin']} {$row['departureTimeAMPM']} from {$row['meetingPlace']}</p>";
 						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$row['trainDescription']} </p>";
 						    		echo "<p>Networks: "; 
@@ -159,7 +160,7 @@
 									
 						 		</div>
 						 	</div>
-						 	<p>.</p>
+						 	<br>
 						<?php 
 						}
 					}
@@ -185,7 +186,7 @@
 									<?php 
 									echo "<p> <b>{$trainInfo['trainName']}</b> </p>";
 									echo "<p> Created by {$trainCreator['firstname']} {$trainCreator['lastname']} </p>";
-						    		echo "<p> Departing at {$trainInfo['departureTime']} from {$trainInfo['meetingPlace']}</p>";
+						    		echo "<p> Departing at {$trainInfo['departureTimeHr']}:{$trainInfo['departureTimeMin']} {$trainInfo['departureTimeAMPM']} from {$trainInfo['meetingPlace']}</p>";
 						    		echo "<p> {$trainInfo['transportType']} with {$trainInfo['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$trainInfo['trainDescription']} </p>";
 						    		echo "<p> Networks: "; 
@@ -318,7 +319,7 @@
 								<?php 
 								
 									echo "<p> <b>{$trainName['trainName']}</b> </p>";
-						    		echo "<p> Departing at {$trainName['departureTime']} from {$trainName['meetingPlace']}</p>";
+						    		echo "<p> Departing at {$trainName['departureTimeHr']}:{$trainName['departureTimeMin']} {$trainName['departureTimeAMPM']} from {$trainName['meetingPlace']}</p>";
 						    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
 						    		echo "<p>Networks: "; 
@@ -632,10 +633,15 @@
 							$trainDescription = mysql_real_escape_string($_POST['train_description']);
 							$networkName = mysql_real_escape_string($_POST['network']);
 							
-							$meetingTime = $meetingTimeHr*100 + $meetingTimeMin; 
+							if ($meetingTimeHr > 12 || $meetingTimeHr < 1) {
+								die("Invalid hour inputted");
+							}
+							if ($meetingTimeMin > 59 || $meetingTimeMin < 1) {
+								die("Invalid minute inputted");
+							}
 							$trainquery = mysql_query("INSERT INTO trains (spaceAvailable, transportType, trainDescription, 
-													  meetingPlace, departureTime, trainName) 
-													  VALUES('".$seatAvailable."', '".$transportationType."', '".$trainDescription."', '".$meetingPlace."', '".$meetingTime."', '".$trainName."')");
+													  meetingPlace, departureTimeHr, departureTimeMin, departureTimeAMPM, trainName) 
+													  VALUES('".$seatAvailable."', '".$transportationType."', '".$trainDescription."', '".$meetingPlace."', '".$meetingTimeHr."', '".$meetingTimeMin."', '".$meetingTimeAmpm."', '".$trainName."')");
 
 							if($trainquery)
 							{
