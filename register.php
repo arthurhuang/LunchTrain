@@ -44,7 +44,8 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 			}
         	if($addToAllNetworkQuery) {
         		echo "<h1>Success</h1>";
-        		echo "<p>Your account was successfully created. Please <a href=\"index.php\">click here to login</a>.</p>";
+        		echo "<p>Your account was successfully created. Referring you to the login page.</p>";
+        		echo "<meta http-equiv='refresh' content='1.0;index.php' />";
         	} else {
         		echo $userID;
         		echo $allNetworkID;

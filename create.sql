@@ -126,11 +126,13 @@ CREATE TABLE IF NOT EXISTS train_invite (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS profiles (
-       email varchar(50) not null primary key,
+       userid INT NOT NULL,
        employment varchar(50),
        education varchar(75),
        favoriteFood varchar(75),
-       favoriteRestaurant varchar(50)
+       favoriteRestaurant varchar(50),
+       PRIMARY KEY (userid),
+       FOREIGN KEY (userid) REFERENCES users(userid)
 ) ENGINE=InnoDB;
 -- Instantiate some default values
 INSERT INTO network (networkName, description) VALUES ('All', 'Public to everyone');
