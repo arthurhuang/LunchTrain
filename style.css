@@ -124,11 +124,14 @@ a:hover, a:active, a:visited {
 
 #logout {
 	float:left;
-	margin:3px 0px 0px 64px;
+	margin: 1px 0px 0px 83px;
 }
-#header nav {
-  margin-left: 208px;
+
+
+#header {
+	float:left;
 }
+
 #header li {
   float: left;
   list-style-type:none;
