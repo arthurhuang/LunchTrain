@@ -31,7 +31,10 @@ CREATE TABLE IF NOT EXISTS trains (
         transportType VARCHAR(20) NOT NULL,
         trainDescription VARCHAR(255),
         meetingPlace CHAR(255) NOT NULL,
-        departureTime INT NOT NULL,
+--        departureTime INT NOT NULL,
+        departureTimeHr INT NOT NULL,
+        departureTimeMin INT NOT NULL,
+        departureTimeAMPM CHAR(2),
         private BOOLEAN NOT NULL default 0,
         trainName varchar(50)
 ) ENGINE=InnoDB;

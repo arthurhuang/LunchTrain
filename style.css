@@ -63,7 +63,6 @@ a:hover, a:active, a:visited {
 	height:300px;
 }
 
-
 #right{
 	position:absolute;
 	margin-left:353px
@@ -78,7 +77,6 @@ a:hover, a:active, a:visited {
 	position: fixed;
 	top: 0;
 	left: 0;
-
 }
 #righttitle{
 	height:30px;
