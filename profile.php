@@ -177,7 +177,7 @@
 					}
 					elseif ($tab == "trainProfile") {
 						$trainID = $_GET['trainID'];
-						if(trainID == null) {
+						if($trainID == null) {
 							echo "<p>Error: No train ID provided. </p>";
 						}
 						else {
@@ -461,7 +461,10 @@
 							$friendID = $row['userid'];
 							$friendFirstName = $row['firstname'];
 							$friendLastName = $row['lastname'];
-							echo "<p> $friendFirstName $friendLastName </p>";
+							$userProfileHref = "profile.php?tab=viewUser&id=$friendID";	
+							?>
+							<p> <a href=<?php echo $userProfileHref ?>> <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> </p>
+							<?php
 							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
 							if (mysql_num_rows($friendQuery) == 1) {
 								$href = "profile.php?tab=friends&leaveFriend=$friendID"; ?>
@@ -511,7 +514,76 @@
 							echo "<p> {$row['firstname']} {$row['lastname']} </p>";
 						}
 						*/
-	 				} 
+	 				}  				
+	 				elseif ($tab == "viewUser") {
+	 					$viewID = $_GET['id'];
+	 					if ($viewID != null && is_numeric($viewID)) {
+	 						//print profile
+	 						$getUserInfo = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$viewID."'");
+	 						if(!$getUserInfo) {
+	 							$message  = 'Invalid query: ' . mysql_error() . "\n";
+	 							echo "$message";
+								die($message);
+	 						} else {
+	 							$row = mysql_fetch_assoc($getUserInfo);
+	 							$userFirstname = $row['firstname'];
+	 							$userLastname = $row['lastname'];
+	 						}
+		 					$viewProfile = mysql_query("SELECT * FROM profiles WHERE userid = '".$viewID."'");
+							if (!$viewProfile) {
+								echo "<p>$userFirstname $userLastname's profile has not been set up yet.</p>";
+							} else {
+								$row = mysql_fetch_assoc($viewProfile);
+									echo "<h2> Profile for $userFirstname $userLastname: </h2>";
+									echo "<p> <b>Employment</b>: {$row['employment']} </p>";
+									echo "<p> <b>Education</b>: {$row['education']} </p>";
+									echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
+									echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
+								
+							}
+							echo "<br>";
+							//print trains
+							$getTrainInfo = mysql_query("SELECT * FROM trains WHERE trainid in 
+														(SELECT trainid FROM user_in_train WHERE userid = '".$viewID."' 
+														AND attending = 1)");
+							echo "<h2> Trains $userFirstname $userLastname are on: </h2> ";
+							if (!$getTrainInfo) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message); 
+							}
+							while($trainInfo = mysql_fetch_assoc($getTrainInfo)) {
+								$trainID = $trainInfo['trainid'];
+								$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
+								$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
+								?>
+								<div id="trainslot">
+								<div id="slotinfo">
+									
+									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $trainInfo['trainName'] ?></b> </a> </p>
+									<?php
+						    		echo "<p> Departing at {$trainInfo['departureTimeHr']}:{$trainInfo['departureTimeMin']} {$trainInfo['departureTimeAMPM']} from {$trainInfo['meetingPlace']}</p>";
+						    		echo "<p> {$trainInfo['transportType']} with {$trainInfo['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$trainInfo['trainDescription']} </p>";
+						    		echo "<p>Networks: "; 
+						    		if(!$netQuery) {
+						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+										die($message);
+						    		}
+						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+						    			$networkName = $netQueryRow['networkName'];
+						    			echo "$networkName. ";
+						    		}
+						    		echo "</p>";
+						    		echo "<br>";
+						    		
+						    		 ?>
+						    		
+						    	</div>
+						    	</div>
+						    	<?php 
+							}
+	 					}
+	 				}
 	 				elseif ($tab == "viewNetwork") {
 	 					$join = $_GET['joinN'];
 						if ($join != null) {
