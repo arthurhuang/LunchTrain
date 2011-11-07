@@ -771,9 +771,9 @@
 							 <form method="post" action="profile.php?tab=addTrain" name="registerform"
 								id="registerform">
 								<fieldset>
-									<label for="train_name">Train Name:</label>
-									<input type="text" name="train_name" id="train_name" /><br />
-									<label for="meeting_time">Meeting Time:</label>
+									<p><label for="train_name">Train Name:</label>
+									<input type="text" name="train_name" id="train_name" /><br /> </p>
+									<p><label for="meeting_time">Meeting Time:</label>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
@@ -781,22 +781,22 @@
 										<option value="am">am</option>
 										<option value="pm">pm</option>
 									</select>
-									<br /> 
-									<label for="transportation_type">Transportation Type:</label>
+									<br /> </p>
+									<p><label for="transportation_type">Transportation Type:</label>
 									<select name="transportation_type">
 										<option value="Driving">Driving</option>
 										<option value="Walking">Walking</option>
 										<option value="Biking">Biking</option>
 										<option value="Public">Public Transportation</option>
 										<option value="Other">Other</option>
-									</select><br />
-									<label for="meeting_place">Meeting Place:</label>
-									<input type="text" name="meeting_place" id="meeting_place" /><br />
-									<label for="seat_available">Seat Available:</label>
-									<input type="text" name="seat_available" id="seat_available" /><br /> 
-									<label for="train_description">Train Description:</label>
-									<input type="text" name="train_description" id="train_description" /><br /> 
-									<label for="network">Network:</label>
+									</select><br /></p>
+									<p><label for="meeting_place">Meeting Place:</label>
+									<input type="text" name="meeting_place" id="meeting_place" /><br /></p>
+									<p><label for="seat_available">Seat Available:</label>
+									<input type="text" name="seat_available" id="seat_available" /><br /> </p>
+									<p><label for="train_description">Train Description:</label>
+									<input type="text" name="train_description" id="train_description" /><br /> </p>
+									<p><label for="network">Network:</label>
 									<select name="network">
 										 <?php 
 									        $result = mysql_query("SELECT * FROM network WHERE netid in 
@@ -809,8 +809,8 @@
 									            echo '<option value="'.$row['networkName'].'">'.$row['networkName'].'</option>';
 									        } 
 									    ?> 
-									</select><br />
-									<input type="submit" name="add" id="add" value="Add Train" />
+									</select><br /></p>
+									<p><input type="submit" name="add" id="add" value="Add Train" /></p>
 								</fieldset>
 							</form>
 					</div>
