@@ -234,8 +234,8 @@ input {
 	font-family: Helvetica;
     background-color: #FFF;
     padding: 2px;
-    float: left;
     margin-bottom: 4px;
 }
+
 input:hover {
 }
