@@ -3,7 +3,8 @@
     padding: 0;
 }
 body {
-	font-family: Arial Narrow;
+	font-family: Arial;
+	font-size: 13px;
 }
 a {
 	color: #000;
@@ -16,20 +17,20 @@ a:hover, a:active, a:visited {
 }
 
 #topbar {
-	height:96px;
-	background-color: #fff;
+	height:60px;
 
 }
-#topbarline{
-	height:25px;
-	background-color: #000;
+#searchbar {
+	width:400px;
+	float:left;
+	margin:22px 0px 0px -26px;
 }
 #topbartitle{
-	width:800px;
+	width:250px;
 	height:70px;
-	background-image:url('images/logo.png');
+	background-image:url('images/logo2.png');
 	background-repeat: no-repeat;
-	margin-left:200px;
+	margin: 20px 0px 0px 140px;
 	float:left;
 	text-decoration:none;
 }
@@ -42,14 +43,15 @@ a:hover, a:active, a:visited {
 
 #crate {
 	position:relative;
+	background-image: url('images/cloud.jpg');
 }
 #leftsidebar {
 	width:150px;
 	padding-left:200px;
 	position:absolute;
 	float:left;
-	border-right: 3px solid #333;
-	background:#fff;
+	border-right: 1px solid #ccc;
+	background-image: url('images/cloud.jpg');
 }
 #name {
 	height:100%;
@@ -65,7 +67,10 @@ a:hover, a:active, a:visited {
 
 #right{
 	position:absolute;
-	margin-left:353px
+	margin-left:359px;
+	width: 900px;
+	height:510px;
+	background-image: url('images/cloud.jpg');
 
 }
 
@@ -88,12 +93,13 @@ a:hover, a:active, a:visited {
 }
 #rightbottom{
 	margin-left:5px;
+	margin-top: 5px;
 }
 #trainslot {
 	height:84px;
 	width:600px;
-	border: 3px dotted #666;
-	padding:3px 15px 15px 5px;
+	border: 1px dotted #CCC;
+	padding:3px 15px 0px 5px;
 }
 #trainslot2 {
 	height:114px;
@@ -128,7 +134,7 @@ a:hover, a:active, a:visited {
 
 #logout {
 	float:left;
-	margin: 1px 0px 0px 83px;
+	margin: 2px 0px 0px 80px;
 }
 
 
@@ -141,17 +147,17 @@ a:hover, a:active, a:visited {
   list-style-type:none;
 }
 #header li a {
-  float: left;
-  font-size: 20px;
-  padding-left:10px;
-  padding-right:10px;
-  font-weight: bold;
+  float:left;
+  font-size:13px;
+  padding: 4px 14px 0px 14px;
   color: #333;
   text-decoration: none;
-  border-right: 3px solid #333;
-  font-family: 'impact';
-  height: 22px;
-  text-transform: uppercase;
+  border:1px solid #ccc;
+  font-family: 'Arial';
+  height: 20px;
+  margin-right:3px;
+  margin-left: 5px;
+  font-weight: bold;
 }
 #header li strong {
   display: block;
@@ -165,8 +171,7 @@ a:hover, a:active, a:visited {
   margin-right: 0;
 }
 #header li.active a, #header li a:hover{
-  background-color: #000;
-  color: #fff;
+  background-color: #EEE;
 }
 
 
@@ -229,10 +234,9 @@ label {
 }
 input {
 	font-family: Helvetica;
-    border: 1px solid #000;
-	margin-bottom: 5px;
     background-color: #FFF;
     padding: 2px;
+    float: left;
     
 }
 input:hover {

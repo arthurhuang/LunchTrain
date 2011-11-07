@@ -11,9 +11,14 @@
 <body>
 <div id="crate">
 		<div id="topbar">
-	 		<div id="topbarline">
-	 		</div>
+	 		
 	 		<div id="topbartitle">
+	 		</div>
+	 		<div id="searchbar">
+	 			<form method="post" action="profile.php?tab=search" name="searchTrain" id="search">
+					<input type="text" style="height:20px; width: 300px; border: 1px solid #BBB" name="train" id="train" />
+					<input type="image" src="images/search.png" name="image" width="30" height="30">
+				</form>
 	 		</div>
 	 	</div>
 	 	
@@ -71,7 +76,7 @@
 	 				</header>
 	 				<div id="logout">
 	 					<form method="post" action="logout.php" name="logout" id="logout">
-							<input type="submit" name="logout" id="logout" value="Logout" />
+							<input style='border:1px solid #ccc' type="submit" name="logout" id="logout" value="Logout" />
 						</form>
 	 				</div>
 	 			</div>
@@ -152,18 +157,18 @@
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
 										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="image" src="images/leave.png" name="image" width="71" height="27">
+										<input type="image" src="images/leave.png" name="image" width="40" height="45">
 										</form>
 										
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="image" src="images/invite.png" name="invite" width="80" height="27">
+										<input type="image" src="images/addfriend.png" name="invite" width="40" height="45">
 										</form>
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
-										<input type="image" src="images/join.png" name="image" width="56" height="27">
+										<input type="image" src="images/join.png" name="image" width="40" height="45">
 										</form>
 									<?php 
 									}
@@ -369,7 +374,7 @@
 						if (!$result) {
 							echo "<p>Your profile has not been set up yet.</p>";
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
+							
 						}
 						while ($row = mysql_fetch_assoc($result)) {
 							echo "<p> <b>Employment</b>: {$row['employment']} </p>";
