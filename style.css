@@ -62,14 +62,14 @@ a:hover, a:active, a:visited {
 	background-repeat: no-repeat;
 }
 #leftsidebarinfo {
-	height:300px;
+	height:700px;
 }
 
 #right{
 	position:absolute;
 	margin-left:359px;
 	width: 900px;
-	height:510px;
+	height:910px;
 	background-image: url('images/cloud.jpg');
 
 }
