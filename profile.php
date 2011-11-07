@@ -539,7 +539,6 @@
 									echo "<p> <b>Education</b>: {$row['education']} </p>";
 									echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
 									echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
-								
 							}
 							echo "<br>";
 							//print trains
