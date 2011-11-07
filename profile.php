@@ -302,7 +302,6 @@
 								die("Unknown response: $response");
 							}
 						} else {
-							echo "<h2> Invites to join trains from your friends: </h2>";
 							$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'");
 							if (!$result) {
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -455,7 +454,7 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=friends' />";
 						}
 						
-	 					echo "<h2>Friends</h2>";
+	 					
 	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."'");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -467,21 +466,29 @@
 							$friendLastName = $row['lastname'];
 							$userProfileHref = "profile.php?tab=viewUser&id=$friendID";	
 							?>
-							<p> <a href=<?php echo $userProfileHref ?>> <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> </p>
+							
+							
+							
 							<?php
 							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
 							if (mysql_num_rows($friendQuery) == 1) {
 								$href = "profile.php?tab=friends&leaveFriend=$friendID"; ?>
-								<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
-								<input type="submit" name="leaveF" id="leaveF" value="Unfriend" />
-								</form>
+								<div>
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
+										<input type="image"  src="images/unfriend.png" name="leaveF" width="40" height="45" />
+									</form>
+								</div>
 				 			<?php
 							} else { 
 								$href = "profile.php?tab=friends&addFriend=$friendID";
 								?>
-								<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
-								<input type="submit" name="joinF" id="joinF" value="Friend" />
-								</form>
+								<div>
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
+										<input type="image"  src="images/friend.png" name="joinF" width="40" height="45" />
+									</form>
+								</div>
 							<?php 
 							}
 						}

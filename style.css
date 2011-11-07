@@ -102,9 +102,9 @@ a:hover, a:active, a:visited {
 	padding:3px 15px 0px 5px;
 }
 #trainslot2 {
-	height:114px;
+	height:95px;
 	width:600px;
-	border: 3px dotted #666;
+	border: 1px dotted #ccc;
 	padding:3px 15px 15px 5px;
 }
 
