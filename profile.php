@@ -5,6 +5,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 <title>LunchTrain</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
+<script src="validate.js" type="text/javascript"></script>
+<script src="calendar.js" type="text/javascript"></script>
+
 </head>  
 <body>
 <div id="body">
@@ -640,16 +643,17 @@
 							 <h2>Add Train</h2>
 							 <p>Please enter your details below to add a train.</p>
 				
-							 <form method="post" action="profile.php?tab=addTrain" name="registerform"
-								id="registerform">
+							 <form method="post" action="profile.php?tab=addTrain" name="addTrain"
+								id="addTrain" onsubmit="return validateAddTrain();">
 								<fieldset>
 									<label for="train_name">Train Name:</label>
 									<input type="text" name="train_name" id="train_name" /><br />
 									<label for="meeting_time">Meeting Time:</label>
+									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
-									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
-									<select name="ampm">
+									<input type="text" name="meeting_time_min" length="2" size="4" id="meeting_time" />
+									<select name="ampm" id="meeting_time">
 										<option value="am">am</option>
 										<option value="pm">pm</option>
 									</select>
@@ -664,7 +668,7 @@
 									</select><br />
 									<label for="meeting_place">Meeting Place:</label>
 									<input type="text" name="meeting_place" id="meeting_place" /><br />
-									<label for="seat_available">Seat Available:</label>
+									<label for="seat_available">Spots Available:</label>
 									<input type="text" name="seat_available" id="seat_available" /><br /> 
 									<label for="train_description">Train Description:</label>
 									<input type="text" name="train_description" id="train_description" /><br /> 

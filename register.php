@@ -67,19 +67,17 @@ else
     
    <p>Please enter your details below to register.</p>
     
-	<form method="post" action="register.php" name="registerform" id="registerform">
+	<form method="post" action="register.php" name="registerform" id="registerform" onsubmit="return validateRegistration();">
 	<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
 		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
 		<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
 		<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
+		<label for="verifypw">Verify password:</label><input type="password" name="verifypw" id="verifypw" /><br />
 		<input type="submit" name="register" id="register" value="Register" />
 	</fieldset>
 	</form>
-    
-   <?php
-}
-?>
+
 </div>
 </body>
 </html>
