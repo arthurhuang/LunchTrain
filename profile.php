@@ -356,10 +356,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image" src="images/accept.png" name="invite" width="80" height="27">
+								<input type="image" src="images/accept.png" name="invite" width="40" height="45">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image" src="images/decline.png" name="dec" width="80" height="27">
+								<input type="image" src="images/decline.png" name="dec" width="40" height="45">
 								</form>
 								
 								</div>

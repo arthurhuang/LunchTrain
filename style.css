@@ -129,7 +129,6 @@ a:hover, a:active, a:visited {
 	height: 500px;
 	margin-left:auto;
 	margin-right:auto;
-	background-color:#F5F6F6;
 }
 
 #logout {
@@ -189,14 +188,13 @@ a:hover, a:active, a:visited {
 
 #title {
 height:50px;
-background-image: url('images/logo.png');
+background-image: url('images/logo2.png');
 background-repeat: no-repeat;
 margin-left: 211px;
-margin-top: 0px;
-background-color:#F5F6F6;
+margin-top: 30px;
 }
 #content{
-height: 257px;
+height: 148px;
 margin-left:0px;
 border:2px solid #DDD;
 background:white;
@@ -204,12 +202,12 @@ border-radius:1em;
 -khtml-border-radius: 1em;
 }
 #contenttop{
-height:50px;
+height:36px;
 width:400px;
 margin-left:auto;
 margin-right:auto;
 font-weight:bold;
-font-size:24px;
+font-size:18px;
 color:#444;
 text-align: center;
 margin-top:12px;
@@ -237,7 +235,7 @@ input {
     background-color: #FFF;
     padding: 2px;
     float: left;
-    
+    margin-bottom: 4px;
 }
 input:hover {
 }

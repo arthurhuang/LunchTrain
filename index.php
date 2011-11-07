@@ -61,16 +61,16 @@ else
 		<div id="contentmiddle">
 		<form method="post" action="index.php" name="loginform" id="loginform">
 			<fieldset>
-				<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
-				<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
-				<input type="submit" name="login" id="login" value="Login" />
+				<label for="email">Email:</label><input style='border:1px solid #ccc' type="text" name="email" id="email" /><br />
+				<label for="password">Password:</label><input style='border:1px solid #ccc' type="password" name="password" id="password" /><br />
+				<br />
+				<input type="submit" style='border:1px solid #ccc' name="login" id="login" value="Login" /> 
 				<a href="register.php">Register</a>
 			</fieldset>
 		</form>
 		</div>
 
-		<div id="contentbottom">
-		</div>
+	
 	</div>
    <?php
 }
