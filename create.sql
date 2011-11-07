@@ -137,6 +137,14 @@ CREATE TABLE IF NOT EXISTS profiles (
        PRIMARY KEY (userid),
        FOREIGN KEY (userid) REFERENCES users(userid)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS validation (
+       userid INT NOT NULL,
+       hash VARCHAR(75) NOT NULL,
+       PRIMARY KEY (userid),
+       FOREIGN KEY (userid) REFERENCES users(userid)
+) ENGINE=InnoDB;
+
 -- Instantiate some default values
 INSERT INTO network (networkName, description) VALUES ('All', 'Public to everyone');
 

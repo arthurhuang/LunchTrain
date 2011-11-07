@@ -721,7 +721,7 @@
 							if ($meetingTimeHr > 12 || $meetingTimeHr < 1) {
 								die("Invalid hour inputted");
 							}
-							if ($meetingTimeMin > 59 || $meetingTimeMin < 1) {
+							if ($meetingTimeMin > 59 || $meetingTimeMin < 0) {
 								die("Invalid minute inputted");
 							}
 							$trainquery = mysql_query("INSERT INTO trains (spaceAvailable, transportType, trainDescription, 
