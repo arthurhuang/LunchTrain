@@ -16,8 +16,8 @@
 	 		</div>
 	 		<div id="searchbar">
 	 			<form method="post" action="profile.php?tab=search" name="searchTrain" id="search">
-					<input type="text" style="height:20px; width: 300px; border: 1px solid #BBB" name="train" id="train" />
-					<input type="image" src="images/search.png" name="image" width="30" height="30">
+					<input type="text" style="height:20px; float:left; width: 300px; border: 1px solid #BBB" name="train" id="train" />
+					<input type="image" style='float:left' src="images/search.png" name="image" width="30" height="30">
 				</form>
 	 		</div>
 	 	</div>
@@ -157,18 +157,18 @@
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
 										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="image" src="images/leave.png" name="image" width="40" height="45">
+										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">
 										</form>
 										
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="image" src="images/addfriend.png" name="invite" width="40" height="45">
+										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">
 										</form>
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
-										<input type="image" src="images/join.png" name="image" width="40" height="45">
+										<input type="image" style='float:left' src="images/join.png" name="image" width="40" height="45">
 										</form>
 									<?php 
 									}
@@ -356,10 +356,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image" src="images/accept.png" name="invite" width="80" height="27">
+								<input type="image" style='float:left' src="images/accept.png" name="invite" width="40" height="45">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image" src="images/decline.png" name="dec" width="80" height="27">
+								<input type="image" style='float:left' src="images/decline.png" name="dec" width="40" height="45">
 								</form>
 								
 								</div>
@@ -383,27 +383,26 @@
 							echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
 						}
 						?>
-						<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
-						<input type="submit" name="edit" id="edit" value="Edit Profile" />
+						<form method="post" action="profile.php?tab=editProfile" id="registerform">
+							<input type="submit" name="edit" id="edit" value="Edit Profile" />
 						</form>
 						<?php
 					} 
 					elseif ($tab == "editProfile") { ?>
 						<p>Please enter your information below to edit your profile.</p>
-						<form method="post" action="profile.php?tab=submitProfile" name="registerform"
-						id="registerform">
-						<fieldset>
-						<label for="employment">Employment:</label>
-						<input type="text" name="employment" id="employment" /><br />
-						<label for="education">Education:</label>
-						<input type="text" name="education" id="education" /><br />
-						<label for="favorite_food">Favorite Foods:</label>
-						<input type="text" name="favorite_food" id="favorite_food" /><br />
-						<label for="favorite_restaurant">Favorite Restaurants:</label>
-						<input type="text" name="favorite_restaurant" id="favorite_restaurant" /><br />
-						<input type="submit" name="edit" id="edit" value="Edit" />
-						</fieldset>
-						</form>
+							<form method="post" action="profile.php?tab=submitProfile" id="registerform">
+								<fieldset>
+									<label for="employment">Employment:</label>
+										<input type="text" name="employment" id="employment" /><br />
+										<label for="education">Education:</label>
+										<input type="text" name="education" id="education" /><br />
+										<label for="favorite_food">Favorite Foods:</label>
+										<input type="text" name="favorite_food" id="favorite_food" /><br />
+										<label for="favorite_restaurant">Favorite Restaurants:</label>
+										<input type="text" name="favorite_restaurant" id="favorite_restaurant" /><br />
+										<input type="submit" name="edit" id="edit" value="Edit" />
+									</fieldset>
+							</form>
 					<?php  
 					}
 					elseif ($tab == "submitProfile") {
@@ -771,7 +770,7 @@
 								id="registerform">
 								<fieldset>
 									<label for="train_name">Train Name:</label>
-									<input type="text" name="train_name" id="train_name" /><br />
+									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
