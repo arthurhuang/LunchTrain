@@ -550,7 +550,6 @@
 									echo "<p> <b>Education</b>: {$row['education']} </p>";
 									echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
 									echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
-								
 							}
 							echo "<br>";
 							//print trains
@@ -729,7 +728,7 @@
 							if ($meetingTimeHr > 12 || $meetingTimeHr < 1) {
 								die("Invalid hour inputted");
 							}
-							if ($meetingTimeMin > 59 || $meetingTimeMin < 1) {
+							if ($meetingTimeMin > 59 || $meetingTimeMin < 0) {
 								die("Invalid minute inputted");
 							}
 							$trainquery = mysql_query("INSERT INTO trains (spaceAvailable, transportType, trainDescription, 

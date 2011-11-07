@@ -44,8 +44,15 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 			}
         	if($addToAllNetworkQuery) {
         		# Send confirmation email
+        		$confirmHash = md5("$firstName $lastName $email SALT$$$");
+        		$addToAllNetworkQuery = mysql_query("INSERT INTO validation (userid, hash) VALUES ('".$userID."', '".$confirmHash."')");
+        		if (!$addToAllNetworkQuery) {
+        			$message  = 'Invalid query: ' . mysql_error() . "\n";
+					die($message);
+        		}
         		$headers = "From: noreply@lunchtrain.com\r\n" . "X-Mailer: php";
-        		mail($email, "Confirmation email from LunchTrain", "Hi $firstName $lastName blahlbahblah", $headers);
+        		$confirmLink = "";
+        		mail($email, "Confirmation email from LunchTrain", "Hi $firstName $lastName, this is the LunchTrain team. Please click $confirmLink to finish your registration.", $headers);
         		echo "<h1>Success</h1>";
         		echo "<p>Your account was successfully created. Referring you to the login page.</p>";
         		echo "<meta http-equiv='refresh' content='1.0;index.php' />";
