@@ -1,4 +1,5 @@
 <?php include "base.php";
+	ob_start();
 	ini_set('session.bug_compat_warn', 0);
 	ini_set('session.bug_compat_42', 0); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -10,6 +11,9 @@
 </head>  
 <body>  
 <?php
+if($_COOKIE['LoggedIn'] == 1 && $_COOKIE['userID'] != null) {
+	echo "<meta http-equiv='refresh' content='0;profile.php' />";
+}
 if(!empty($_POST['email']) && !empty($_POST['password']))
 {
 	$email = mysql_real_escape_string($_POST['email']);
@@ -24,11 +28,15 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
         $lastName = $row['lastname'];
         $userid = $row['userid'];
         
+        #Set Session 
         $_SESSION['firstName'] = $firstName;
         $_SESSION['lastName'] = $lastName;
         $_SESSION['Email'] = $emailResult;
         $_SESSION['LoggedIn'] = 1;
         $_SESSION['userID'] = $userid;
+        #Set Cookies
+        setcookie("userID", $userid, time()+3600);
+        setcookie("LoggedIn", 1, time()+3600);
     	echo "<h1>Login successful for $firstName $lastName.</h1>";
         echo "<p>We are now redirecting you to your profile page.</p>";
        	echo "<meta http-equiv='refresh' content='1.5;profile.php' />";
@@ -53,16 +61,16 @@ else
 		<div id="contentmiddle">
 		<form method="post" action="index.php" name="loginform" id="loginform">
 			<fieldset>
-				<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
-				<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
-				<input type="submit" name="login" id="login" value="Login" />
+				<label for="email">Email:</label><input style='border:1px solid #ccc' type="text" name="email" id="email" /><br />
+				<label for="password">Password:</label><input style='border:1px solid #ccc' type="password" name="password" id="password" /><br />
+				<br />
+				<input type="submit" style='border:1px solid #ccc' name="login" id="login" value="Login" /> 
 				<a href="register.php">Register</a>
 			</fieldset>
 		</form>
 		</div>
 
-		<div id="contentbottom">
-		</div>
+	
 	</div>
    <?php
 }

@@ -31,7 +31,10 @@ CREATE TABLE IF NOT EXISTS trains (
         transportType VARCHAR(20) NOT NULL,
         trainDescription VARCHAR(255),
         meetingPlace CHAR(255) NOT NULL,
-        departureTime INT NOT NULL,
+--        departureTime INT NOT NULL,
+        departureTimeHr INT NOT NULL,
+        departureTimeMin INT NOT NULL,
+        departureTimeAMPM CHAR(2),
         private BOOLEAN NOT NULL default 0,
         trainName varchar(50)
 ) ENGINE=InnoDB;
@@ -126,12 +129,22 @@ CREATE TABLE IF NOT EXISTS train_invite (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS profiles (
-       email varchar(50) not null primary key,
+       userid INT NOT NULL,
        employment varchar(50),
        education varchar(75),
        favoriteFood varchar(75),
-       favoriteRestaurant varchar(50)
+       favoriteRestaurant varchar(50),
+       PRIMARY KEY (userid),
+       FOREIGN KEY (userid) REFERENCES users(userid)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS validation (
+       userid INT NOT NULL,
+       hash VARCHAR(75) NOT NULL,
+       PRIMARY KEY (userid),
+       FOREIGN KEY (userid) REFERENCES users(userid)
+) ENGINE=InnoDB;
+
 -- Instantiate some default values
 INSERT INTO network (networkName, description) VALUES ('All', 'Public to everyone');
 
