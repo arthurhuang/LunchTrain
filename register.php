@@ -5,6 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 <title>LunchTrain</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
+<script src="validate.js" type="text/javascript"></script>
 </head>
 <body>  
 <div id="main">
