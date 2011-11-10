@@ -1,6 +1,7 @@
 <?php include "base.php"; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 <title>LunchTrain</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -9,6 +10,9 @@
 <body>  
 <div id="main">
 <?php
+if($_COOKIE['LoggedIn'] == 1 && $_COOKIE['userID'] != null) {
+	echo "<meta http-equiv='refresh' content='0;profile.php' />";
+}
 if(!empty($_POST['email']) && !empty($_POST['password']))
 {
 	$email = mysql_real_escape_string($_POST['email']);
@@ -75,7 +79,7 @@ else
 	?>
    <h1>Register</h1>
    <p>Please enter your details below to register.</p>
-	<form method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
+	<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
 	<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
 		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
@@ -85,6 +89,7 @@ else
 		<input type="submit" name="register" id="register" value="Register" />
 	</fieldset>
 	</form>
+<?php } ?>
 </div>
 </body>
 </html>
