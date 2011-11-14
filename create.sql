@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS train_in_net;
 DROP TABLE IF EXISTS train_to_loc;
 DROP TABLE IF EXISTS user_msg;
 DROP TABLE IF EXISTS user_in_net;
+DROP TABLE IF EXISTS validation;
 DROP TABLE IF EXISTS train_invite;
 DROP TABLE IF EXISTS trains; 
 DROP TABLE IF EXISTS messages;

@@ -22,11 +22,14 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
     
     if(mysql_num_rows($checklogin) == 1)
     {
+    	
     	$row = mysql_fetch_array($checklogin);
         $emailResult = $row['email'];
         $firstName = $row['firstname'];
         $lastName = $row['lastname'];
         $userid = $row['userid'];
+        #Check validation
+        #$checkValidation = myqsl_query("SELECT * FROM validation WHERE userid = '".$userid."'");
         
         #Set Session 
         $_SESSION['firstName'] = $firstName;

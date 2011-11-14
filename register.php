@@ -1,14 +1,18 @@
 <?php include "base.php"; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">  
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 <title>LunchTrain</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
+<script src="validate.js" type="text/javascript"></script>
 </head>
 <body>  
 <div id="main">
 <?php
+if($_COOKIE['LoggedIn'] == 1 && $_COOKIE['userID'] != null) {
+	echo "<meta http-equiv='refresh' content='0;profile.php' />";
+}
 if(!empty($_POST['email']) && !empty($_POST['password']))
 {
 	$email = mysql_real_escape_string($_POST['email']);
@@ -51,11 +55,11 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 					die($message);
         		}
         		$headers = "From: noreply@lunchtrain.com\r\n" . "X-Mailer: php";
-        		$confirmLink = "";
+        		$confirmLink = "http://107.20.135.212/journal/LunchTrain/confirm.php?user=$userID&hash=$confirmHash";
         		mail($email, "Confirmation email from LunchTrain", "Hi $firstName $lastName, this is the LunchTrain team. Please click $confirmLink to finish your registration.", $headers);
         		echo "<h1>Success</h1>";
-        		echo "<p>Your account was successfully created. Referring you to the login page.</p>";
-        		echo "<meta http-equiv='refresh' content='1.0;index.php' />";
+        		echo "<p>Your account was successfully created. Please check your email for a confirmation email. It may be in the spam folder. Referring you to the login page.</p>";
+        		echo "<meta http-equiv='refresh' content='1.5;index.php' />";
         	} else {
         		echo $userID;
         		echo $allNetworkID;
@@ -73,24 +77,19 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 else
 {
 	?>
-    
    <h1>Register</h1>
-    
    <p>Please enter your details below to register.</p>
-    
-	<form method="post" action="register.php" name="registerform" id="registerform">
+	<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
 	<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
 		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
 		<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
 		<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
+		<label for="verifypw">Verify password:</label><input type="password" name="verifypw" id="verifypw" /><br />
 		<input type="submit" name="register" id="register" value="Register" />
 	</fieldset>
 	</form>
-    
-   <?php
-}
-?>
+<?php } ?>
 </div>
 </body>
 </html>
