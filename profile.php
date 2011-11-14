@@ -240,15 +240,16 @@
 									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
 									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
-										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
-										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
-										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">
-										</form>
-										
-										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">
-										</form>
+										#$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+										#$invHref = "profile.php?tab=invite&trainID=$trainId"; 
+										?>
+<!--										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">-->
+<!--										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">-->
+<!--										</form>-->
+<!--										-->
+<!--										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">-->
+<!--										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">-->
+<!--										</form>-->
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
