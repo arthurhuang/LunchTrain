@@ -34,10 +34,25 @@
 	 				echo "<meta http-equiv='refresh' content='0;logout.php' />";
 	 			}
 	 			echo "<p><b> {$_SESSION['firstName']} {$_SESSION['lastName']} </b></p>" ?>
-	 			<p> <a href="profile.php?tab=viewNetwork">Join Network</a></p>
 	 			<br></br>
 	 		</div>
 			<div id="leftsidebarinfo">
+				<p><b>My Networks:</b></p>
+				<?php 
+				$userId = $_COOKIE['userID'];
+				$networksImIn = mysql_query("SELECT * FROM user_in_net WHERE userid = '".$userId."'");
+				
+				while ($row = mysql_fetch_assoc($networksImIn)) {
+					$netId = $row['netid'];
+					$net = mysql_query("SELECT * FROM network WHERE netid = '".$netId."'");
+					$netrow = mysql_fetch_assoc($net);
+					echo "<p> {$netrow['networkName']} </p>";
+				}
+				?>
+				<p> <a href="profile.php?tab=viewNetwork">Join Network</a></p>
+				<br></br>
+				
+				
 				<p><b>Trains I'm In:</b>  </p>
 	 			<?php 
 	 			$userId = $_COOKIE['userID'];
@@ -50,9 +65,7 @@
 	 				echo "<p> {$trainrow['trainName']}  </p>"; 
 				}?>
 
-	 			<form method="post" action="profile.php?tab=addTrain" name="add" id="addtrain">
-				<input type="image" src="images/add.png" name="image" width="101" height="27">
-				</form>
+	 			<p> <a href="profile.php?tab=addTrain">New Train</a></p>
 	 		</div>
 			 
 	 	</div>
@@ -61,6 +74,7 @@
 				
 				<div id="righttitle">
 	 				<header id="header">
+	 					<li><a href="profile.php?tab=myTrains">My Trains</a></li>
 	 					<li><a href="profile.php?tab=viewTrains">Trains</a></li>
 	 					<li><a href="profile.php?tab=aboutMe">About Me</a></li>
 			 			<li><a href="profile.php?tab=friends">Friends</a></li>
@@ -90,6 +104,75 @@
 					$userId = $_SESSION['userID'];
 					if ($tab == "") {
 						echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+					}
+					elseif ($tab == "myTrains") {
+						$leave = $_GET['leaveTrain'];
+						if ($leave != null) {
+							$trainId = $leave;
+							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
+							if (!$leaveTrain) {
+								echo "<p>Unable to leave train.</p>";
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+						}
+						
+						$result = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."'");
+						if (!$result) {
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
+						while ($row = mysql_fetch_assoc($result)) {
+							$trainID = $row['trainid'];
+							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
+							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
+							
+							$trainq = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainID."'");
+							$trainr = mysql_fetch_assoc($trainq);
+							?>
+							<div id="trainslot">
+								<div id="slotinfo">
+									
+									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $trainr['trainName'] ?></b> </a> </p>
+									<?php
+						    		echo "<p> Departing at {$trainr['departureTimeHr']}:{$trainr['departureTimeMin']} {$trainr['departureTimeAMPM']} from {$trainr['meetingPlace']}</p>";
+						    		echo "<p> {$trainr['transportType']} with {$trainr['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$trainr['trainDescription']} </p>";
+						    		echo "<p>Networks: "; 
+						    		if(!$netQuery) {
+						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
+										die($message);
+						    		}
+						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
+						    			$networkName = $netQueryRow['networkName'];
+						    			echo "$networkName. ";
+						    		}
+						    		echo "</p>";
+						    		echo "<br>";
+						    		
+						    		 ?>
+						    		
+						    	</div>
+						 		<div id="slotoptions">
+									<?php 
+									$trainId = $row['trainid'];
+									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
+									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
+									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+									<input type="image"  src="images/addfriend.png" name="invite" width="103" height="20">
+									</form>
+								</div>
+								<div id="slotexit">
+									<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+									<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+									</form>
+								</div>
+							</div>
+							<br>
+						<?php
+						} 
 					}
 					elseif ($tab == "viewTrains") {
 						$join = $_GET['joinTrain'];
@@ -479,7 +562,7 @@
 								<div>
 									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
 									<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
-										<input type="image"  src="images/unfriend.png" name="leaveF" width="40" height="45" />
+										<input type="image"  src="images/leave.png" name="leaveF" width="20" height="20" />
 									</form>
 								</div>
 				 			<?php
@@ -489,7 +572,7 @@
 								<div>
 									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
 									<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
-										<input type="image"  src="images/friend.png" name="joinF" width="40" height="45" />
+										<input type="image"  src="images/friend.png" name="joinF" width="20" height="20" />
 									</form>
 								</div>
 							<?php 

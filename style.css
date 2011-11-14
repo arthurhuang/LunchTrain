@@ -97,9 +97,9 @@ a:hover, a:active, a:visited {
 }
 #trainslot {
 	height:84px;
-	width:600px;
+	width:620px;
 	border: 1px dotted #CCC;
-	padding:3px 15px 0px 5px;
+	padding:2px 5px 0px 5px;
 }
 #trainslot2 {
 	height:95px;
@@ -110,11 +110,16 @@ a:hover, a:active, a:visited {
 
 #slotinfo {
 	float:left;
-	width:500px;	
+	width:450px;	
 }
 #slotoptions {
 	float:left;
-	width:100px;
+	width:150px;
+}
+#slotexit {
+	float:left;
+	width:20px;
+	height:20px;
 }
 #slotjoin {
 	border: 1px solid #444;
