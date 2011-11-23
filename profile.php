@@ -49,7 +49,9 @@
 					echo "<p> {$netrow['networkName']} </p>";
 				}
 				?>
-				<p> <a href="profile.php?tab=viewNetwork">Join Network</a></p>
+				<form method="post" action="profile.php?tab=viewNetwork" name="joinnetwork" id="joinnetwork">
+				<input type="image"  src="images/joinnetwork.png" name="network" width="104" height="23">
+				</form>
 				<br></br>
 				
 				
@@ -64,8 +66,11 @@
 	 				$trainrow = mysql_fetch_assoc($train);
 	 				echo "<p> {$trainrow['trainName']}  </p>"; 
 				}?>
-
-	 			<p> <a href="profile.php?tab=addTrain">New Train</a></p>
+				
+				<form method="post" action="profile.php?tab=addTrain" name="addtrain" id="addtrain">
+				<input type="image"  src="images/createtrain.png" name="train" width="99" height="23">
+				</form>
+				
 	 		</div>
 			 
 	 	</div>
@@ -200,7 +205,7 @@
 									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
 									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-									<input type="image"  src="images/addfriend.png" name="invite" width="106" height="25">
+									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
 									</form>
 								</div>
 								<div id="slotexit">
@@ -294,7 +299,7 @@
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
-										<input type="image" style='float:left' src="images/join.png" name="image" width="91" height="25">
+										<input type="image" style='float:left' src="images/join.png" name="image" width="83" height="23">
 										</form>
 									<?php 
 									}
