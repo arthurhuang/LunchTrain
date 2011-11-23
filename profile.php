@@ -438,6 +438,7 @@
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
 									die($message);
 								}
+							if (mysql_num_rows($result) == 0) echo "You have no messages in your inbox.";
 							while ($row = mysql_fetch_assoc($result)) {
 								//Get source name
 								$sourceID = $row['sourceid'];
@@ -520,12 +521,13 @@
 					} 
 					elseif ($tab == "editProfile") { ?>
 						<p>Please enter your information below to edit your profile.</p>
+						<br></br>
 							<form method="post" action="profile.php?tab=submitProfile" id="registerform">
 								<fieldset>
 									<label for="employment">Employment:</label>
 										<input type="text" name="employment" id="employment" /><br />
 										<label for="education">Education:</label>
-										<input type="text" name="education" id="education" /><br />
+									  	<input type="text" name="education" id="education" /><br />
 										<label for="favorite_food">Favorite Foods:</label>
 										<input type="text" name="favorite_food" id="favorite_food" /><br />
 										<label for="favorite_restaurant">Favorite Restaurants:</label>
@@ -617,7 +619,7 @@
 								<div>
 									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
 									<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
-										<input type="image"  src="images/friend.png" name="joinF" width="20" height="20" />
+										<input type="image"  src="images/friend.png" name="joinF" width="93" height="23" />
 									</form>
 								</div>
 							<?php 
@@ -749,7 +751,7 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewNetwork' />";
 						}
 	 					//display all networks
-	 					echo "<h2>Your networks</h2>";
+	 					echo "<p><b>Your Networks:</b></p>";
 	 					$networkIDQuery = mysql_query("SELECT * FROM user_in_net WHERE userid = '".$userId."'");
 	 					if (!$networkIDQuery) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -760,18 +762,26 @@
 							$networkQuery = mysql_query("SELECT * from network WHERE netid = '".$netID."'");
 							$network = mysql_fetch_assoc($networkQuery);
 							$networkName = $network['networkName'];
-							$networkDescription = $network['description'];
-							echo "<b>$networkName</b>:";
-							echo "<p> $networkDescription </p>";
-							$href = "profile.php?tab=viewNetwork&leaveN=$netID";
-							?>
-							<form method="post" action="<?php echo $href ?>" name="leaveN" id="leaveN">
-								<input type="submit" name="leaveN" id="leaveN" value="Leave" />
-							</form>
+							$networkDescription = $network['description'];  ?>
+						
+							<div>
+								<div style='float:left; width:400px'>
+									<b><?php echo $networkName ?></b>
+									<p><?php echo $networkDescription ?></p>
+								</div>
+								<div>
+									<form method="post" action="<?php echo $href ?>" name="leaveN" id="leaveN">
+										<input type="image"  src="images/leave.png" name="leaveN" width="20" height="20" />
+									</form>
+									<br></br>
+								</div>
+							</div>
+							
+							
 							<?php 
 						}
 						echo "<br>";
-						echo "<h2>Networks you can join</h2>";
+						echo "<p><b>Join Network:</b></p>";
 						$notMemberNetworkIDQuery = mysql_query("SELECT netid FROM network WHERE netid NOT IN (SELECT netid FROM user_in_net WHERE userid = '".$userId."')");
 						if (!$notMemberNetworkIDQuery) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -782,14 +792,21 @@
 							$networkQuery = mysql_query("SELECT * from network WHERE netid = '".$netID."'");
 							$network = mysql_fetch_assoc($networkQuery);
 							$networkName = $network['networkName'];
-							$networkDescription = $network['description'];
-							echo " <b>$networkName</b>:";
-							echo "<p> $networkDescription </p>";
-							$href = "profile.php?tab=viewNetwork&joinN=$netID";
-							?>
-							<form method="post" action="<?php echo $href ?>" name="joinN" id="joinN">
-								<input type="submit" name="joinN" id="joinN" value="Join" />
-							</form>
+							$networkDescription = $network['description']; ?>
+							
+							<div>
+								<div style='float:left; width:400px'>
+									<b><?php echo $networkName ?></b>
+									<p><?php echo $networkDescription ?></p>
+								</div>
+								<div>
+									<form method="post" action="profile.php?tab=viewNetwork&joinN=$netID" name="joinN" id="joinN">
+										<input type="image"  src="images/joinnetwork.png" name="joinN" width="104" height="23" />
+									</form>
+									<br></br>
+								</div>
+							</div>
+							
 							<?php 
 						}
 						echo "<br>";
