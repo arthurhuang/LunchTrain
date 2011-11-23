@@ -74,22 +74,61 @@
 				
 				<div id="righttitle">
 	 				<header id="header">
-	 					<li><a href="profile.php?tab=myTrains">My Trains</a></li>
-	 					<li><a href="profile.php?tab=viewTrains">Trains</a></li>
-	 					<li><a href="profile.php?tab=aboutMe">About Me</a></li>
-			 			<li><a href="profile.php?tab=friends">Friends</a></li>
-			 			
-			 			<?php 
+	 					<?php 
+	 					
+	 					$tabValue = $_GET['tab'];
+	 					if ($tabValue == "myTrains" || $tabValue == "") {
+	 						$link = "profile.php?tab=myTrains";
+	 						echo "<li><a href=$link style='background-color:#ddd'>My Trains</a></li>";
+	 					} else {
+	 						$link = "profile.php?tab=myTrains";
+	 						echo "<li><a href=$link >My Trains</a></li>";
+	 					}
+	 					if ($tabValue == "viewTrains") {
+	 						$link = "profile.php?tab=viewTrains";
+	 						echo "<li><a href=$link style='background-color:#ddd'>Departing Trains</a></li>";
+	 					} else {
+	 						$link = "profile.php?tab=viewTrains";
+	 						echo "<li><a href=$link >Departing Trains</a></li>";
+	 					}
+	 					if ($tabValue == "aboutMe") {
+	 						$link = "profile.php?tab=aboutMe";
+	 						echo "<li><a href=$link style='background-color:#ddd'>About Me</a></li>";
+	 					} else {
+	 						$link = "profile.php?tab=aboutMe";
+	 						echo "<li><a href=$link >About Me</a></li>";
+	 					}
+	 					if ($tabValue == "friends") {
+	 						$link = "profile.php?tab=friends";
+	 						echo "<li><a href=$link style='background-color:#ddd'>Friends</a></li>";
+	 					} else {
+	 						$link = "profile.php?tab=friends";
+	 						echo "<li><a href=$link >Friends</a></li>";
+	 					}
+	 					
 			 			$result = mysql_query("SELECT * FROM train_invite WHERE destid = '".$userId."'"); 
 			 			$num = mysql_num_rows($result);
-			 			if ($num > 0) {
-			 				?>
-			 				<li><a href="profile.php?tab=inbox">Inbox (<?php echo $num ?>)</a></li>
+			 			if ($tabValue == "inbox") {
+			 				if ($num > 0) {
+			 					?>
+			 					<li><a href="profile.php?tab=inbox" style='background-color:#ddd'>Inbox (<?php echo $num ?>)</a></li>
+			 					<?php 
+			 				} else {
+			 					?>
+			 					<li><a href="profile.php?tab=inbox" style='background-color:#ddd'>Inbox</a></li>
 			 				<?php 
+			 				}
 			 			} else {
-			 				?>
-			 				<li><a href="profile.php?tab=inbox">Inbox</a></li>
-			 			<?php }?>
+			 				if ($num > 0) {
+			 					?>
+			 					<li><a href="profile.php?tab=inbox">Inbox (<?php echo $num ?>)</a></li> 
+			 				<?php 
+			 				} else { ?>
+			 					<li><a href="profile.php?tab=inbox">Inbox</a></li>
+			 				<?php 
+			 				}
+			 			}?>
+			 			
 	 				</header>
 	 				<div id="logout">
 	 					<form method="post" action="logout.php" name="logout" id="logout">
@@ -161,7 +200,7 @@
 									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
 									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-									<input type="image"  src="images/addfriend.png" name="invite" width="103" height="20">
+									<input type="image"  src="images/addfriend.png" name="invite" width="106" height="25">
 									</form>
 								</div>
 								<div id="slotexit">
@@ -243,19 +282,19 @@
 										#$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 										#$invHref = "profile.php?tab=invite&trainID=$trainId"; 
 										?>
-<!--										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">-->
-<!--										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">-->
-<!--										</form>-->
-<!--										-->
-<!--										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">-->
-<!--										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">-->
-<!--										</form>-->
+										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">
+										</form>
+										
+										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">
+										</form>
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
-										<input type="image" style='float:left' src="images/join.png" name="image" width="40" height="45">
+										<input type="image" style='float:left' src="images/join.png" name="image" width="91" height="25">
 										</form>
 									<?php 
 									}
