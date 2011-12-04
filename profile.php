@@ -716,13 +716,7 @@
 								$message  = 'Invalid query: ' . mysql_error() . '\n';
 								echo ($message);
 							}
-						} else { ?>
-							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
-							<input type="submit" name="edit" id="edit" value="Edit Profile" />
-							</form>
-							<p>You did not fill in all fields.</p>
-						<?php 	
-						}
+						} 
 					}
 	 				elseif ($tab == "friends") {
 	 					$join = $_GET['addFriend'];
