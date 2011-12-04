@@ -151,13 +151,16 @@
 					}
 					elseif($tab == "search") {
 						$query = mysql_real_escape_string($_POST['query']);
-						echo "<p> Search results for: $query </p>";
+						echo "<p><b> Search results for: $query </b></p>";
 						$searchQuery = mysql_query("SELECT * FROM trains WHERE trainName LIKE '%".$query."%' OR trainDescription LIKE '%".$query."%' OR meetingPlace LIKE '%".$query."%'");
 						if(!$searchQuery) {
 							echo "<p>Search failed.</p>";
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
 						} 
+						if(mysql_num_rows($searchQuery) == 0) {
+							echo "<p>Sorry, no trains were found matching your query. </p>";
+						}
 						while($searchRow = mysql_fetch_assoc($searchQuery)) {
 							$trainID = $searchRow['trainid'];
 							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
@@ -230,6 +233,9 @@
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
 						}
+						if(mysql_num_rows($result) == 0) {
+						   	echo "You have not joined any trains. Look at Departing Trains for a list of trains you can join";
+					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
 							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");
@@ -324,11 +330,14 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
 						}
 						
-						$result = mysql_query("SELECT * FROM trains");
+						$result = mysql_query("SELECT * FROM trains WHERE trainid NOT IN (SELECT trainid FROM user_in_train WHERE userid='".$userId."')");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
 						}
+						if(mysql_num_rows($result) == 0) {
+						   	echo "There are no trains in your network. Create a train to start planning your lunch.";
+					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
 							$netQuery = mysql_query("SELECT networkName, netid FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
@@ -439,6 +448,35 @@
 						    		
 						    		 ?>
 						    	</div>
+						 		<div id="slotoptions">
+						 		<?php 
+									$trainId = $trainID;
+									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
+									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
+									if (mysql_num_rows($userAlreadyInTrain) == 1) {
+										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+										$invHref = "profile.php?tab=invite&trainID=$trainId"; 
+										?>
+										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="99" height="23">
+										</form>
+										</div>
+										<div id="slotexit">
+											<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+											<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+											</form>
+									<?php
+									} else { 
+										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
+										?>
+										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
+										<input type="image" style='float:left' src="images/join.png" name="image" width="83" height="23">
+										</form>
+									<?php 
+									}
+									?>
+									
+						 		</div>
 						    </div> <?php 
 						}
 					}
