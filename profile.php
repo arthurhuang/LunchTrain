@@ -234,7 +234,7 @@
 							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
-						   	echo "You have not joined any trains. Look at Departing Trains for a list of trains you can join";
+						   	echo "You have not joined any trains. Look at <a href=\"profile.php?tab=viewTrains\">Departing Trains</a> for a list of trains you can join.";
 					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
