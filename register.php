@@ -77,18 +77,37 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 else
 {
 	?>
-   <h1>Register</h1>
-   <p>Please enter your details below to register.</p>
-	<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
-	<fieldset>
+	<div id="body">
+	<div id="container">
+	<div id="title">
+	</div>
+	<div id="content" style="height:280px">
+		<div id="contenttop">
+			<p> Collaborative lunch planning <p>
+		</div>
+		<div id="contentmiddle">
+		<p style="font-size:20px; font-weight:bold">Register</p>
+   		<p>Please enter your details below to register.</p>
+   		<br></br>
+		<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
+		<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
 		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
 		<label for="email">Email:</label><input type="text" name="email" id="email" /><br />
 		<label for="password">Password:</label><input type="password" name="password" id="password" /><br />
 		<label for="verifypw">Verify password:</label><input type="password" name="verifypw" id="verifypw" /><br />
 		<input type="submit" name="register" id="register" value="Register" />
-	</fieldset>
-	</form>
+		</fieldset>
+		</form>
+		</div>
+		
+	</div>
+	</div>
+	</div>
+
+	
+	
+   
 <?php } ?>
 </div>
 </body>

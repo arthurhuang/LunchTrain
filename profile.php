@@ -62,10 +62,12 @@
 	 			
 	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
 	 				$trainId = $row['trainid'];
-	 				$train = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'");
-	 				$trainrow = mysql_fetch_assoc($train);
-	 				echo "<p> {$trainrow['trainName']}  </p>"; 
-				}?>
+	 				$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId"; 
+	 				$tNameQuery = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'"); 
+	 				$tName = mysql_fetch_assoc($tNameQuery); ?>
+	 				<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $tName['trainName'] ?></b> </a> </p>						
+				<?php 
+	 			}?>
 				
 				<form method="post" action="profile.php?tab=addTrain" name="addtrain" id="addtrain">
 				<input type="image"  src="images/createtrain.png" name="train" width="99" height="23">
@@ -487,10 +489,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image" style='float:left' src="images/accept.png" name="invite" width="40" height="45">
+								<input type="image"  src="images/accept.png" name="invite" width="64" height="23">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image" style='float:left' src="images/decline.png" name="dec" width="40" height="45">
+								<input type="image"  src="images/decline.png" name="dec" width="67" height="23">
 								</form>
 								
 								</div>
@@ -502,11 +504,10 @@
 					}
 					elseif ($tab == "aboutMe") {
 						$result = mysql_query("SELECT * FROM profiles WHERE userid = '".$userId."'");
-						if (!$result) {
+						if (mysql_num_rows($result) == 0) {
 							echo "<p>Your profile has not been set up yet.</p>";
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							
 						}
+						
 						while ($row = mysql_fetch_assoc($result)) {
 							echo "<p> <b>Employment</b>: {$row['employment']} </p>";
 							echo "<p> <b>Education</b>: {$row['education']} </p>";
@@ -928,7 +929,7 @@
 									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
-									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
+									<input style="margin-left:175px" type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" length="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
