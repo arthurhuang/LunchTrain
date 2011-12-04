@@ -19,7 +19,7 @@
 	 		</div>
 	 		<div id="searchbar">
 	 			<form method="post" action="profile.php?tab=search" name="searchTrain" id="search">
-					<input type="text" style="height:20px; float:left; width: 300px; border: 1px solid #BBB" name="train" id="train" />
+					<input type="text" style="height:20px; float:left; width: 300px; border: 1px solid #BBB" name="query" id="query" />
 					<input type="image" style='float:left' src="images/search.png" name="image" width="30" height="30">
 				</form>
 	 		</div>
@@ -148,6 +148,69 @@
 					$userId = $_SESSION['userID'];
 					if ($tab == "") {
 						echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+					}
+					elseif($tab == "search") {
+						$query = mysql_real_escape_string($_POST['query']);
+						echo "<p> Search results for: $query </p>";
+						$searchQuery = mysql_query("SELECT * FROM trains WHERE trainName LIKE '%".$query."%' OR trainDescription LIKE '%".$query."%' OR meetingPlace LIKE '%".$query."%'");
+						if(!$searchQuery) {
+							echo "<p>Search failed.</p>";
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						} 
+						while($searchRow = mysql_fetch_assoc($searchQuery)) {
+							$trainID = $searchRow['trainid'];
+							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
+							$netQuery = mysql_query("SELECT networkName, netid FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
+							if(!$netQuery) {
+						    	$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+						    }
+							$netQueryRow = mysql_fetch_assoc($netQuery);
+						    $networkName = $netQueryRow['networkName'];
+						    $networkID = $netQueryRow['netid'];
+						    
+						    $checkNetworkUserTrain = mysql_query("SELECT * FROM user_in_net WHERE userid='".$userId."' AND netid = '".$networkID."'");
+						    if(mysql_num_rows($checkNetworkUserTrain) != 1) {
+						    	continue;
+						    }
+							?>
+							<div id="trainslot">
+								<div id="slotinfo">
+									
+									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $searchRow['trainName'] ?></b> </a> </p>
+									<?php
+									$mysqldate = $searchRow['departureDateTime'];
+									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+						    		echo "<p> Departing at $deptTime from {$searchRow['meetingPlace']}</p>";
+						    		echo "<p> {$searchRow['transportType']} with {$searchRow['spaceAvailable']} spaces available </p>";
+						    		echo "<p> Comments: {$searchRow['trainDescription']} </p>";
+						    		echo "<p>Network: $networkName"; 
+						    		echo "</p>";
+						    		echo "<br>";
+						    		
+						    		 ?>
+						    		
+						    	</div>
+						 		<div id="slotoptions">
+									<?php 
+									$trainId = $searchRow['trainid'];
+									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
+									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
+									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
+									</form>
+								</div>
+								<div id="slotexit">
+									<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+									<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+									</form>
+								</div>
+							</div>
+							<br>
+						<?php
+						}
 					}
 					elseif ($tab == "myTrains") {
 						$leave = $_GET['leaveTrain'];
@@ -309,13 +372,14 @@
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
 										$invHref = "profile.php?tab=invite&trainID=$trainId"; 
 										?>
-										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">
-										</form>
-										
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="40" height="45">
+										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="99" height="23">
 										</form>
+										</div>
+										<div id="slotexit">
+											<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+											<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+											</form>
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
@@ -531,6 +595,7 @@
 						if (!$result) {
 							echo "<p>Your profile has not been set up yet.</p>";
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
 							echo "<p>Your profile has not been set up yet. Please click below to start editing your profile. </p>";
@@ -549,15 +614,37 @@
 						</form>
 						<?php
 					} 
-					elseif ($tab == "editProfile") { ?>
-						<p>Please enter your information below to edit your profile.</p>
-						<br></br>
-							<form method="post" action="profile.php?tab=submitProfile" id="registerform">
-								<fieldset>
-									<label for="employment">Employment:</label>
+					elseif ($tab == "editProfile") {
+						$getProfile = mysql_query("SELECT * FROM profiles WHERE userid = '".$userId."'");
+						if(mysql_num_rows($getProfile) == 1) {
+							$profileRow = mysql_fetch_assoc($getProfile);
+							?>
+							<p>Please enter your information below to edit your profile.</p>
+							<br></br>
+								<form method="post" action="profile.php?tab=submitProfile" id="registerform">
+									<fieldset>
+										<label for="employment">Employment:</label>
+											<input type="text" name="employment" id="employment" value="<?php echo $profileRow['employment']?>"/><br />
+											<label for="education">Education:</label>
+										  	<input type="text" name="education" id="education" value="<?php echo $profileRow['education']?>"/><br />
+											<label for="favorite_food">Favorite Foods:</label>
+											<input type="text" name="favorite_food" id="favorite_food" value="<?php echo $profileRow['favoriteFood']?>"/><br />
+											<label for="favorite_restaurant">Favorite Restaurants:</label>
+											<input type="text" name="favorite_restaurant" id="favorite_restaurant" value="<?php echo $profileRow['favoriteRestaurant']?>" /><br />
+											<input type="submit" name="edit" id="edit" value="Save changes" />
+										</fieldset>
+								</form>
+							<?php 
+						} else {
+							?>
+							<p>Please enter your information below to edit your profile.</p>
+							<br></br>
+								<form method="post" action="profile.php?tab=submitProfile" id="registerform">
+									<fieldset>
+										<label for="employment">Employment:</label>
 										<input type="text" name="employment" id="employment" /><br />
 										<label for="education">Education:</label>
-									  	<input type="text" name="education" id="education" /><br />
+										<input type="text" name="education" id="education" /><br />
 										<label for="favorite_food">Favorite Foods:</label>
 										<input type="text" name="favorite_food" id="favorite_food" /><br />
 										<label for="favorite_restaurant">Favorite Restaurants:</label>
@@ -565,7 +652,8 @@
 										<input type="submit" name="edit" id="edit" value="Save changes" />
 									</fieldset>
 							</form>
-					<?php  
+						<?php  
+						}
 					}
 					elseif ($tab == "submitProfile") {
 						if(!empty($_POST['employment']) && !empty($_POST['education']) && !empty($_POST['favorite_food']) && !empty($_POST['favorite_restaurant']) ) {
@@ -574,14 +662,21 @@
 							$favoriteFood = mysql_real_escape_string($_POST['favorite_food']);
 							$favoriteRestaurant = mysql_real_escape_string($_POST['favorite_restaurant']);
 							
-							$result = mysql_query("INSERT INTO profiles (userid, employment, education, favoriteFood, favoriteRestaurant)
+							$getProfile = mysql_query("SELECT * FROM profiles WHERE userid = '".$userId."'");
+							if(mysql_num_rows($getProfile) == 1) {
+								$result = mysql_query("UPDATE profiles SET employment='".$employment."', education='".$education."', favoriteFood='".$favoriteFood."', favoriteRestaurant='".$favoriteRestaurant."' WHERE userid = '".$userId."'");
+							} else {
+								$result = mysql_query("INSERT INTO profiles (userid, employment, education, favoriteFood, favoriteRestaurant)
 													VALUES('".$userId."', '".$employment."', '".$education."', '".$favoriteFood."', '".$favoriteRestaurant."')");
+							}
 							if ($result) {
-								echo "<h1>Your profile has been edited.</h1>";
+								echo "<h1>Your profile has been updated.</h1>";
 								echo "<p>We are now redirecting you to your profile page.</p>";
 								echo "<meta http-equiv='refresh' content='1.5;profile.php?tab=aboutMe' />";
 							} else { 
 								echo "<p> insert profile query failed </p>";
+								$message  = 'Invalid query: ' . mysql_error() . '\n';
+								echo ($message);
 							}
 						} else { ?>
 							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
@@ -794,8 +889,9 @@
 							$networkQuery = mysql_query("SELECT * from network WHERE netid = '".$netID."'");
 							$network = mysql_fetch_assoc($networkQuery);
 							$networkName = $network['networkName'];
-							$networkDescription = $network['description'];  ?>
-						
+							$networkDescription = $network['description'];
+							$href = "profile.php?tab=viewNetwork&leaveN=$netID";  ?>
+							
 							<div>
 								<div style='float:left; width:400px'>
 									<b><?php echo $networkName ?></b>
@@ -824,7 +920,8 @@
 							$networkQuery = mysql_query("SELECT * from network WHERE netid = '".$netID."'");
 							$network = mysql_fetch_assoc($networkQuery);
 							$networkName = $network['networkName'];
-							$networkDescription = $network['description']; ?>
+							$networkDescription = $network['description'];
+							$href = "profile.php?tab=viewNetwork&joinN=$netID" ?>
 							
 							<div>
 								<div style='float:left; width:400px'>
@@ -832,7 +929,7 @@
 									<p><?php echo $networkDescription ?></p>
 								</div>
 								<div>
-									<form method="post" action="profile.php?tab=viewNetwork&joinN=$netID" name="joinN" id="joinN">
+									<form method="post" action="<?php echo $href ?>" name="joinN" id="joinN">
 										<input type="image"  src="images/joinnetwork.png" name="joinN" width="104" height="23" />
 									</form>
 									<br></br>
@@ -883,7 +980,7 @@
 								echo "<p>We are now redirecting you to the network page.</p>";
 								echo "<meta http-equiv='refresh' content='1.5;profile.php?tab=viewNetwork' />";
 							} else { 
-								echo "<p> insert profile query failed </p>";
+								die("A network with that name already exists. Please try again.");
 							}
 						} else { ?>
 							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">

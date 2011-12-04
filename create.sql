@@ -41,7 +41,9 @@ CREATE TABLE IF NOT EXISTS trains (
 CREATE TABLE IF NOT EXISTS network (
         networkName VARCHAR(30),
         description VARCHAR(30),
-        netid INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+        netid INT NOT NULL AUTO_INCREMENT,
+        PRIMARY KEY (netid, networkName),
+        UNIQUE KEY (networkName)
 ) ENGINE=InnoDB;
 
 -- stores location information
