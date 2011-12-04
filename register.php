@@ -13,7 +13,7 @@
 if($_COOKIE['LoggedIn'] == 1 && $_COOKIE['userID'] != null) {
 	echo "<meta http-equiv='refresh' content='0;profile.php' />";
 }
-if(!empty($_POST['email']) && !empty($_POST['password']))
+if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['firstName']) && !empty($_POST['lastName']))
 {
 	$email = mysql_real_escape_string($_POST['email']);
     $password = md5(mysql_real_escape_string($_POST['password']));
@@ -77,6 +77,7 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
 else
 {
 	?>
+
 	<div id="body">
 	<div id="container">
 	<div id="title">

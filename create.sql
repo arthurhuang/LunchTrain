@@ -32,10 +32,7 @@ CREATE TABLE IF NOT EXISTS trains (
         transportType VARCHAR(20) NOT NULL,
         trainDescription VARCHAR(255),
         meetingPlace CHAR(255) NOT NULL,
---        departureTime INT NOT NULL,
-        departureTimeHr INT NOT NULL,
-        departureTimeMin INT NOT NULL,
-        departureTimeAMPM CHAR(2),
+        departureDateTime DATETIME NOT NULL,
         private BOOLEAN NOT NULL default 0,
         trainName varchar(50)
 ) ENGINE=InnoDB;
@@ -44,7 +41,9 @@ CREATE TABLE IF NOT EXISTS trains (
 CREATE TABLE IF NOT EXISTS network (
         networkName VARCHAR(30),
         description VARCHAR(30),
-        netid INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+        netid INT NOT NULL AUTO_INCREMENT,
+        PRIMARY KEY (netid, networkName),
+        UNIQUE KEY (networkName)
 ) ENGINE=InnoDB;
 
 -- stores location information

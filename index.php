@@ -47,7 +47,7 @@ if(!empty($_POST['email']) && !empty($_POST['password']))
     else
     {
     	echo "<h1>Error</h1>";
-        echo "<p>Sorry, your account could not be found. Please <a href=\"index.php\">click here to try again</a>.</p>";
+        echo "<p>Sorry, either your account could not be found or you gave a wrong password. Please <a href=\"index.php\">click here to try again</a>.</p>";
     }
 }
 else
