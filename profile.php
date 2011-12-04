@@ -180,7 +180,9 @@
 									
 									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $trainr['trainName'] ?></b> </a> </p>
 									<?php
-						    		echo "<p> Departing at {$trainr['departureTimeHr']}:{$trainr['departureTimeMin']} {$trainr['departureTimeAMPM']} from {$trainr['meetingPlace']}</p>";
+									$mysqldate = $trainr['departureDateTime'];
+									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+						    		echo "<p> Departing at $deptTime from {$trainr['meetingPlace']}</p>";
 						    		echo "<p> {$trainr['transportType']} with {$trainr['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$trainr['trainDescription']} </p>";
 						    		echo "<p>Networks: "; 
@@ -221,25 +223,39 @@
 					elseif ($tab == "viewTrains") {
 						$join = $_GET['joinTrain'];
 						if ($join != null) {
-							$trainId = $join;
-							$attending = 1;
-							$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
-																	VALUES('".$userId."', '".$trainId."', '".$attending."')");
-							if (!$joinTrain) {
-								echo "<p>Unable to join train.</p>";
+							$trainId = intval($join);
+							//check if there are still spaces available
+							$spacesAvailableQuery = mysql_query("SELECT spaceAvailable FROM trains WHERE trainid = $trainId");
+							if(!$spacesAvailableQuery) {
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
 								die($message);
 							}
-							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+							$row = mysql_fetch_assoc($spacesAvailableQuery);
+							$spacesAvailable = $row['spaceAvailable'];
+							if($spacesAvailable < 1) {
+								echo "<p>Sorry, train is already full. Unable to join</p>";
+							} else {
+								$attending = 1;
+								$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
+																		VALUES('".$userId."', '".$trainId."', '".$attending."')");
+								$updateSpaceAvai = mysql_query("update trains SET spaceAvailable = spaceAvailable - 1 WHERE trainid = $trainId");
+								if (!$joinTrain || !$updateSpaceAvai) {
+									echo "<p>Unable to join train.</p>";
+									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									die($message);
+								}
+								echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
+							}
 						}
 						
 						$leave = $_GET['leaveTrain'];
 						if ($leave != null) {
-							$trainId = $leave;
+							$trainId = intval($leave);
 							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
-							if (!$leaveTrain) {
+							$updateSpaceAvai = mysql_query("update trains SET spaceAvailable = spaceAvailable + 1 WHERE trainid = $trainId");
+							if (!$leaveTrain || !$updateSpaceAvai) {
 								echo "<p>Unable to leave train.</p>";
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								$message  = "Invalid query: " .mysql_error(). "\n";
 								die($message);
 							}
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
@@ -252,7 +268,19 @@
 						}
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
-							$netQuery = mysql_query("SELECT networkName FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
+							$netQuery = mysql_query("SELECT networkName, netid FROM network WHERE netid IN (SELECT netid FROM train_in_net WHERE trainid = '".$trainID."')");	
+							if(!$netQuery) {
+						    	$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+						    }
+							$netQueryRow = mysql_fetch_assoc($netQuery);
+						    $networkName = $netQueryRow['networkName'];
+						    $networkID = $netQueryRow['netid'];
+						    
+						    $checkNetworkUserTrain = mysql_query("SELECT * FROM user_in_net WHERE userid='".$userId."' AND netid = '".$networkID."'");
+						    if(mysql_num_rows($checkNetworkUserTrain) != 1) {
+						    	continue;
+						    }
 							$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainID";
 							?>
 							<div id="trainslot">
@@ -260,18 +288,12 @@
 									
 									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $row['trainName'] ?></b> </a> </p>
 									<?php
-						    		echo "<p> Departing at {$row['departureTimeHr']}:{$row['departureTimeMin']} {$row['departureTimeAMPM']} from {$row['meetingPlace']}</p>";
+						    		$mysqldate = $row['departureDateTime'];
+									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+						    		echo "<p> Departing at $deptTime from {$row['meetingPlace']}</p>";
 						    		echo "<p> {$row['transportType']} with {$row['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$row['trainDescription']} </p>";
-						    		echo "<p>Networks: "; 
-						    		if(!$netQuery) {
-						    			$message  = 'Invalid query: ' . mysql_error() . "\n";
-										die($message);
-						    		}
-						    		while($netQueryRow = mysql_fetch_assoc($netQuery)) {
-						    			$networkName = $netQueryRow['networkName'];
-						    			echo "$networkName. ";
-						    		}
+						    		echo "<p>Network: $networkName"; 
 						    		echo "</p>";
 						    		echo "<br>";
 						    		
@@ -284,8 +306,8 @@
 									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
 									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
-										#$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
-										#$invHref = "profile.php?tab=invite&trainID=$trainId"; 
+										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+										$invHref = "profile.php?tab=invite&trainID=$trainId"; 
 										?>
 										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
 										<input type="image" style='float:left' src="images/leave.png" name="image" width="40" height="45">
@@ -331,9 +353,11 @@
 							<div id="trainslot2">
 								<div id="slotinfo">
 									<?php 
+									$mysqldate = $trainInfo['departureDateTime'];
+									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
 									echo "<p> <b>{$trainInfo['trainName']}</b> </p>";
 									echo "<p> Created by {$trainCreator['firstname']} {$trainCreator['lastname']} </p>";
-						    		echo "<p> Departing at {$trainInfo['departureTimeHr']}:{$trainInfo['departureTimeMin']} {$trainInfo['departureTimeAMPM']} from {$trainInfo['meetingPlace']}</p>";
+						    		echo "<p> Departing at $deptTime from {$trainInfo['meetingPlace']}</p>";
 						    		echo "<p> {$trainInfo['transportType']} with {$trainInfo['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$trainInfo['trainDescription']} </p>";
 						    		echo "<p> Networks: "; 
@@ -464,7 +488,9 @@
 									<?php 
 									
 										echo "<p> <b>{$trainName['trainName']}</b> </p>";
-							    		echo "<p> Departing at {$trainName['departureTimeHr']}:{$trainName['departureTimeMin']} {$trainName['departureTimeAMPM']} from {$trainName['meetingPlace']}</p>";
+							    		$mysqldate = $trainName['departureDateTime'];
+										$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+						    			echo "<p> Departing at $deptTime from {$trainName['meetingPlace']}</p>";
 							    		echo "<p> {$trainName['transportType']} with {$trainName['spaceAvailable']} spaces available </p>";
 							    		echo "<p> Comments: {$trainName['trainDescription']} </p>";
 							    		echo "<p>Networks: "; 
@@ -505,13 +531,17 @@
 						if (!$result) {
 							echo "<p>Your profile has not been set up yet.</p>";
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							
 						}
-						while ($row = mysql_fetch_assoc($result)) {
-							echo "<p> <b>Employment</b>: {$row['employment']} </p>";
-							echo "<p> <b>Education</b>: {$row['education']} </p>";
-							echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
-							echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
+						if(mysql_num_rows($result) == 0) {
+							echo "<p>Your profile has not been set up yet. Please click below to start editing your profile. </p>";
+						}
+						else {
+							while ($row = mysql_fetch_assoc($result)) {
+								echo "<p> <b>Employment</b>: {$row['employment']} </p>";
+								echo "<p> <b>Education</b>: {$row['education']} </p>";
+								echo "<p> <b>Favorite Foods</b>: {$row['favoriteFood']} </p>";
+								echo "<p> <b>Favorite Restaurant</b>: {$row['favoriteRestaurant']} </p>";
+							}
 						}
 						?>
 						<form method="post" action="profile.php?tab=editProfile" id="registerform">
@@ -532,7 +562,7 @@
 										<input type="text" name="favorite_food" id="favorite_food" /><br />
 										<label for="favorite_restaurant">Favorite Restaurants:</label>
 										<input type="text" name="favorite_restaurant" id="favorite_restaurant" /><br />
-										<input type="submit" name="edit" id="edit" value="Edit" />
+										<input type="submit" name="edit" id="edit" value="Save changes" />
 									</fieldset>
 							</form>
 					<?php  
@@ -704,7 +734,9 @@
 									
 									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $trainInfo['trainName'] ?></b> </a> </p>
 									<?php
-						    		echo "<p> Departing at {$trainInfo['departureTimeHr']}:{$trainInfo['departureTimeMin']} {$trainInfo['departureTimeAMPM']} from {$trainInfo['meetingPlace']}</p>";
+						    		$mysqldate = $trainInfo['departureDateTime'];
+									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+						    		echo "<p> Departing at $deptTime from {$trainInfo['meetingPlace']}</p>";
 						    		echo "<p> {$trainInfo['transportType']} with {$trainInfo['spaceAvailable']} spaces available </p>";
 						    		echo "<p> Comments: {$trainInfo['trainDescription']} </p>";
 						    		echo "<p>Networks: "; 
@@ -862,7 +894,7 @@
 						}
 	 				}
 	 				elseif ($tab == "addTrain") {
-	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time_hr']) && !empty($_POST['meeting_time_min']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) && !empty($_POST['network']) ) {
+	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time_hr']) && !empty($_POST['meeting_time_min']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) && !empty($_POST['network']) && !empty($_POST['meeting_date_Month_ID']) ) {
 							$trainName = mysql_real_escape_string($_POST['train_name']);
 							$meetingTimeHr = intval(mysql_real_escape_string($_POST['meeting_time_hr']));
 							$meetingTimeMin = intval(mysql_real_escape_string($_POST['meeting_time_min']));
@@ -872,6 +904,9 @@
 							$transportationType = mysql_real_escape_string($_POST['transportation_type']);
 							$trainDescription = mysql_real_escape_string($_POST['train_description']);
 							$networkName = mysql_real_escape_string($_POST['network']);
+							$meetingTimeMonth = mysql_real_escape_string($_POST['meeting_date_Month_ID']);
+							$meetingTimeDay = mysql_real_escape_string($_POST['meeting_date_Day_ID']);
+							$meetingTimeYear = mysql_real_escape_string($_POST['meeting_date_Year_ID']);
 							
 							if ($meetingTimeHr > 12 || $meetingTimeHr < 1) {
 								die("Invalid hour inputted");
@@ -879,9 +914,16 @@
 							if ($meetingTimeMin > 59 || $meetingTimeMin < 0) {
 								die("Invalid minute inputted");
 							}
+							$meetingTimeHr = date("H", strtotime($meetingTimeHr.' '.$meetingTimeAmpm));
+							$mysqldate = date('Y-m-d H:i:s', mktime($meetingTimeHr, $meetingTimeMin, 0, $meetingTimeMonth+1, $meetingTimeDay, $meetingTimeYear));
+							if(strtotime($mysqldate) < strtotime('now')) {
+								print "<p> mysqlTime: ". strtotime($mysqldate) ."</p>";
+								print "<p> currTime: ". strtotime('now') ."</p>";
+								die("Our trains cannot travel through time and space. Please plan for a date in the future.");
+							}
 							$trainquery = mysql_query("INSERT INTO trains (spaceAvailable, transportType, trainDescription, 
-													  meetingPlace, departureTimeHr, departureTimeMin, departureTimeAMPM, trainName) 
-													  VALUES('".$seatAvailable."', '".$transportationType."', '".$trainDescription."', '".$meetingPlace."', '".$meetingTimeHr."', '".$meetingTimeMin."', '".$meetingTimeAmpm."', '".$trainName."')");
+													  meetingPlace, departureDateTime, trainName) 
+													  VALUES('".$seatAvailable."', '".$transportationType."', '".$trainDescription."', '".$meetingPlace."', '".$mysqldate."', '".$trainName."')");
 
 							if($trainquery)
 							{
@@ -914,6 +956,9 @@
 								echo "<p>You are the owner of train $trainName.</p>";
 								echo "<p>We are now redirecting you to your profile page.</p>";
 						       	echo "<meta http-equiv='refresh' content='1.5;profile.php' />";
+							} else {
+								$message  = 'Invalid query: '.mysql_error($trainquery)."\n";
+								die($message);
 							}
 						}
 						else {
@@ -930,7 +975,7 @@
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
-									<input type="text" name="meeting_time_min" length="2" size="4" id="meeting_time" />
+									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
 										<option value="am">am</option>
 										<option value="pm">pm</option>
@@ -948,7 +993,7 @@
 									<input type="text" name="meeting_place" id="meeting_place" /><br />
 									<label for="seat_available">Spots Available:</label>
 									<input type="text" name="seat_available" id="seat_available" /><br /> 
-									<label for="train_description">Train Description:</label>
+									<label for="train_description">Short Description:</label>
 									<input type="text" name="train_description" id="train_description" /><br /> 
 									<label for="network">Network:</label>
 									<select name="network">

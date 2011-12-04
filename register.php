@@ -13,7 +13,7 @@
 if($_COOKIE['LoggedIn'] == 1 && $_COOKIE['userID'] != null) {
 	echo "<meta http-equiv='refresh' content='0;profile.php' />";
 }
-if(!empty($_POST['email']) && !empty($_POST['password']))
+if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['firstName']) && !empty($_POST['lastName']))
 {
 	$email = mysql_real_escape_string($_POST['email']);
     $password = md5(mysql_real_escape_string($_POST['password']));
@@ -78,7 +78,7 @@ else
 {
 	?>
    <h1>Register</h1>
-   <p>Please enter your details below to register.</p>
+   <p>Please enter all details below to register.</p>
 	<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration()">
 	<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
