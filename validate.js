@@ -11,12 +11,17 @@ function validateRegistration() {
 	var pw1=document.forms["register"]["password"].value;
 	if (pw1.length<6) {
 		alert("Password does not meet our requirements.\nMust be at least 6 characters in length.");
+		document.forms["register"]["password"].value="";
+		document.forms["register"]["verifypw"].value="";
+		document.forms["register"]["password"].refocus();
 		return false;
 	}
 	var pw2=document.forms["register"]["verifypw"].value;
 	if (pw1 != pw2) {
 		alert("Your given passwords do not match.\nPlease enter again.");
 		document.forms["register"]["password"].value="";
+		document.forms["register"]["verifypw"].value="";
+		document.forms["register"]["password"].refocus();
 		return false;
 	}
 	return true;
@@ -28,8 +33,15 @@ function validateAddTrain() {
 	var hour=document.forms["addTrain"]["meeting_time_hr"].value;
 	var min=document.forms["addTrain"]["meetime_time_min"].value;
 	
-	if (hour == "" || hour !== None || min == "" || min == None || isNaN(hour) || isNaN(min) || hour < 1 || hour > 12 || min < 0 || min > 59) {
+	if (name == "" || name == None) {
+		alert("Please enter a name for your train. \nCan be a destination.");
+		return false;
+	}
+	if (hour == "" || hour == None || min == "" || min == None || isNaN(hour) || isNaN(min) || hour < 1 || hour > 12 || min < 0 || min > 59) {
 		alert("Invalid time.");
+		document.forms["addTrain"]["meeting_time_hr"].value="";
+		document.forms["addTrain"]["meeting_time_min"].value="";
+		document.forms["addTrain"]["meeting_time_hr"].refocus();
 		return false;
 	}
 	if (document.forms["addTrain"]["meeting_time_min"].value == "pm") {
@@ -44,6 +56,5 @@ function validateAddTrain() {
 		return false;
 	}
 	
-	
+	return true;
 }
-
