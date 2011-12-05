@@ -1100,8 +1100,7 @@
 							 <h2>Add Train</h2>
 							 <p>Please enter your details below to add a train.</p>
 				
-							 <form method="post" action="profile.php?tab=addTrain" name="addTrain"
-								id="addTrain" onsubmit="return validateAddTrain();">
+							 <form method="post" onsubmit="return validateAddTrain();" action="profile.php?tab=addTrain" name="addTrain" id="addTrain" >
 								<fieldset>
 									<label for="train_name">Train Name:</label>
 									<input type="text" name="train_name" id="train_name" /><br /> 
