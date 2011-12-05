@@ -1111,8 +1111,8 @@
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
-										<option value="am">am</option>
-										<option value="pm">pm</option>
+										<option value="am">pm</option>
+										<option value="pm">am</option>
 									</select>
 									<br /> 
 									<label for="transportation_type">Transportation Type:</label>
