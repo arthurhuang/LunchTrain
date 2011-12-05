@@ -14,7 +14,6 @@
 <body>
 <div id="crate">
 		<div id="topbar">
-	 		
 	 		<div id="topbartitle">
 	 		</div>
 	 		<div id="searchbar">
@@ -863,7 +862,7 @@
 							$getTrainInfo = mysql_query("SELECT * FROM trains WHERE trainid in 
 														(SELECT trainid FROM user_in_train WHERE userid = '".$viewID."' 
 														AND attending = 1)");
-							echo "<h2> Trains $userFirstname $userLastname are on: </h2> ";
+							echo "<h2> Trains $userFirstname $userLastname is on: </h2> ";
 							if (!$getTrainInfo) {
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
 								die($message); 
@@ -1109,8 +1108,7 @@
 							 <h2>Add Train</h2>
 							 <p>Please enter your details below to add a train.</p>
 				
-							 <form method="post" action="profile.php?tab=addTrain" name="addTrain"
-								id="addTrain" onsubmit="return validateAddTrain();">
+							 <form method="post" onsubmit="return validateAddTrain();" action="profile.php?tab=addTrain" name="addTrain" id="addTrain" >
 								<fieldset>
 									<label for="train_name">Train Name:</label>
 									<input type="text" name="train_name" id="train_name" /><br /> 
@@ -1121,8 +1119,8 @@
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
-										<option value="am">pm</option>
-										<option value="pm">am</option>
+										<option value="am">am</option>
+										<option value="pm">pm</option>
 									</select>
 									<br /> 
 									<label for="transportation_type">Transportation Type:</label>
