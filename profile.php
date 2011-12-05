@@ -699,10 +699,11 @@
 										<input type="submit" name="edit" id="edit" value="Save changes" />
 									</fieldset>
 							</form>
+							<?php 
 						}
 					}
 					elseif ($tab == "submitProfile") {
-						if(!empty($_POST['employment']) && !empty($_POST['education']) && !empty($_POST['favorite_food']) && !empty($_POST['favorite_restaurant']) ) {
+						if(!empty($_POST['employment']) || !empty($_POST['education']) || !empty($_POST['favorite_food']) || !empty($_POST['favorite_restaurant']) ) {
 							$employment = mysql_real_escape_string($_POST['employment']);
 							$education = mysql_real_escape_string($_POST['education']);
 							$favoriteFood = mysql_real_escape_string($_POST['favorite_food']);
@@ -751,8 +752,6 @@
 							}
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=friends' />";
 						}
-						
-	 					
 	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."'");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -764,9 +763,6 @@
 							$friendLastName = $row['lastname'];
 							$userProfileHref = "profile.php?tab=viewUser&id=$friendID";	
 							?>
-							
-							
-							
 							<?php
 							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
 							if (mysql_num_rows($friendQuery) == 1) {
@@ -1110,9 +1106,8 @@
 									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
-									<br />
 									<label for="meeting_time_hr"></label>
-									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
+									<input style="margin-left:175px" type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
