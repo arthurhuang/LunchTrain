@@ -254,7 +254,7 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
 						}
 						
-						$result = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."'");
+						$result = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND attending='1'");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -362,12 +362,21 @@
 								echo "<p>Sorry, train is already full. Unable to join</p>";
 							} else {
 								$attending = 1;
-								$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
+								$check = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
+								if(!$check) {
+									die("Check failed");
+								}
+								
+								if(mysql_num_rows($check)) {
+									$joinTrain = mysql_query("UPDATE user_in_train SET attending='1' WHERE userid='".$userId."' AND trainid='".$trainId."'");
+								} else {
+									$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
 																		VALUES('".$userId."', '".$trainId."', '".$attending."')");
+								}
 								$updateSpaceAvai = mysql_query("update trains SET spaceAvailable = spaceAvailable - 1 WHERE trainid = $trainId");
 								if (!$joinTrain || !$updateSpaceAvai) {
-									echo "<p>Unable to join train.</p>";
-									$message  = 'Invalid query: ' . mysql_error() . "\n";
+									echo "<p>Unable to join train. </p>";
+									$message  = 'Invalid query: '.mysql_error($joinTrain)."\n";
 									die($message);
 								}
 								echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
@@ -377,7 +386,7 @@
 						$leave = $_GET['leaveTrain'];
 						if ($leave != null) {
 							$trainId = intval($leave);
-							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
+							$leaveTrain = mysql_query("UPDATE user_in_train SET attending='0' WHERE userid='".$userId."' AND trainid='".$trainId."'");
 							$updateSpaceAvai = mysql_query("update trains SET spaceAvailable = spaceAvailable + 1 WHERE trainid = $trainId");
 							if (!$leaveTrain || !$updateSpaceAvai) {
 								echo "<p>Unable to leave train.</p>";
@@ -387,7 +396,7 @@
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=viewTrains' />";
 						}
 						
-						$result = mysql_query("SELECT * FROM trains WHERE trainid NOT IN (SELECT trainid FROM user_in_train WHERE userid='".$userId."')");
+						$result = mysql_query("SELECT * FROM trains WHERE trainid NOT IN (SELECT trainid FROM user_in_train WHERE userid='".$userId."' AND attending='1')");
 						if (!$result) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
@@ -432,7 +441,7 @@
 						 		<div id="slotoptions">
 									<?php 
 									$trainId = $row['trainid'];
-									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
+									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."' AND attending='1'");
 									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
@@ -508,7 +517,7 @@
 						 		<div id="slotoptions">
 						 		<?php 
 									$trainId = $trainID;
-									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."'");
+									$userAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND trainid = '".$trainId."' AND attending='1'");
 									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
 									if (mysql_num_rows($userAlreadyInTrain) == 1) {
 										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
@@ -576,10 +585,22 @@
 							?>
 							<p style="font-size:15px; font-weight:bold">Invite friends to join <?php echo $row['trainName'] ?>:</p>
 							<?php 
+							//check if there are still spaces available
+							$spacesAvailableQuery = mysql_query("SELECT spaceAvailable FROM trains WHERE trainid = $trainID");
+							if(!$spacesAvailableQuery) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							$row = mysql_fetch_assoc($spacesAvailableQuery);
+							$spacesAvailable = $row['spaceAvailable'];
+							if($spacesAvailable < 1) {
+								echo "<p>Sorry, train is already full. Please choose another train.</p>";
+								break;
+							}
 							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' 
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$userId."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
-													AND userid NOT IN (select userid FROM user_in_train WHERE trainid = '".$trainID."')");
+													AND userid NOT IN (select userid FROM user_in_train WHERE trainid = '".$trainID."' AND attending='1')");
 							if (mysql_num_rows($result) == 0) {
 								echo "<p>All your friends have already been invited on this train.</p>";
 							}
@@ -617,8 +638,15 @@
 								#Accepted the invitation.
 								#Add the user to the train 
 								$attending = 1;
-								$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
+								$check = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' and trainid='".$trainID."'");
+								if(mysql_num_rows($check) == 1) {
+									$checkAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' and trainid='".$trainID."' AND attending='1'");
+									if(mysql_num_rows($checkAlreadyInTrain)) $alreadyIn = True;
+									$joinTrain = mysql_query("UPDATE user_in_train set attending='1' WHERE userid='".$userId."' and trainid='".$trainID."'");
+								} else {
+									$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
 																		VALUES('".$userId."', '".$trainID."', '".$attending."')");
+								}
 								if (!$joinTrain) {
 									echo "<p>Unable to join train.</p>";
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -630,7 +658,12 @@
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
 									die($message);
 								}
+								if($alreadyIn) {
+									echo "You have already joined this train. Dismissing invite.";
+									echo "<meta http-equiv='refresh' content='2;profile.php?tab=inbox' />";
+								} else {
 								echo "<meta http-equiv='refresh' content='0;profile.php?tab=inbox' />";
+								}
 							} elseif ($response == "False") {
 								#Declined the invitation. Just delete this invitation. Maybe let sender know that invitation was declined
 								$declineInvite = mysql_query("DELETE from train_invite WHERE sourceid = '".$sourceID."' AND trainid = '".$trainID."' AND destid = '".$userId."'");
