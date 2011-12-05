@@ -57,7 +57,7 @@
 				<p><b>Trains I'm In:</b>  </p>
 	 			<?php 
 	 			$userId = $_COOKIE['userID'];
-	 			$trainsImIn = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."'");
+	 			$trainsImIn = mysql_query("SELECT * FROM user_in_train WHERE userid = '".$userId."' AND attending='1'");
 	 			
 	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
 	 				$trainId = $row['trainid'];
@@ -194,7 +194,7 @@
 							    		echo "<br>"
 							    		 ?>
 							    	</div> <?php 
-						    $checkUserInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND trainid = '".$trainID."'");
+						    $checkUserInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND trainid = '".$trainID."' AND attending='1'");
 						    if(mysql_num_rows($checkUserInTrain) == 1) {
 								?>
 							 		<div id="slotoptions">
@@ -229,7 +229,7 @@
 						$leave = $_GET['leaveTrain'];
 						if ($leave != null) {
 							$trainId = $leave;
-							$leaveTrain = mysql_query("DELETE FROM user_in_train WHERE userid='".$userId."' AND trainid='".$trainId."'");
+							$leaveTrain = mysql_query("UPDATE user_in_train SET attending='0' WHERE userid='".$userId."' AND trainid='".$trainId."'");
 							if (!$leaveTrain) {
 								echo "<p>Unable to leave train.</p>";
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -284,7 +284,8 @@
 									$trainId = $row['trainid'];
 									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
 									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
-									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
+									$invHref = "profile.php?tab=invite&trainID=$trainId";
+									$editHref = "profile.php?tab=editTrain&trainID=$trainId" ?>
 									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
 									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
 									</form>
@@ -292,10 +293,13 @@
 									<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
 									</form>
 									<?php 
-									if ($row['creator'] == 1) { 
+									if (1 == $row['creator']) { 
 										$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
 										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
 										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
+										</form>
+										<form method="post" action="<?php echo $editHref ?>" name="edit" id="edittrain">
+										<input type="image"  src="images/edittrain.png" name="image" width="97" height="23">
 										</form>
 									<?php 
 									}?>
@@ -512,6 +516,17 @@
 										?>
 										<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
 										<input type="image" style='float:left' src="images/join.png" name="image" width="83" height="23">
+										</form>
+									<?php 
+									}
+									$row = mysql_fetch_assoc($userAlreadyInTrain);
+									if (1 == $row['creator']) { 
+										$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
+										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
+										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
+										</form>
+										<form method="post" action="<?php echo $editHref ?>" name="edit" id="edittrain">
+										<input type="image"  src="images/edittrain.png" name="image" width="97" height="23">
 										</form>
 									<?php 
 									}
@@ -1033,6 +1048,116 @@
 							</form>
 							<p>You did not fill in all fields.</p>
 						<?php 	
+						}
+	 				}
+	 				elseif ($tab == "editTrain") {
+	 					$trainID = $_GET['trainID'];
+	 					if(empty($trainID)) die("No train ID specified");
+	 					$trainID = intval($trainID);
+	 					if(!empty($_POST['train_name']) && !empty($_POST['meeting_time_hr']) && !empty($_POST['meeting_time_min']) && !empty($_POST['meeting_place']) && !empty($_POST['seat_available']) && !empty($_POST['network']) && !empty($_POST['meeting_date_Month_ID']) ) {
+							$trainName = mysql_real_escape_string($_POST['train_name']);
+							$meetingTimeHr = intval(mysql_real_escape_string($_POST['meeting_time_hr']));
+							$meetingTimeMin = intval(mysql_real_escape_string($_POST['meeting_time_min']));
+							$meetingTimeAmpm = mysql_real_escape_string($_POST['ampm']);
+							$meetingPlace = mysql_real_escape_string($_POST['meeting_place']);
+							$seatAvailable = intval(mysql_real_escape_string($_POST['seat_available']));
+							$transportationType = mysql_real_escape_string($_POST['transportation_type']);
+							$trainDescription = mysql_real_escape_string($_POST['train_description']);
+							$networkName = mysql_real_escape_string($_POST['network']);
+							$meetingTimeMonth = mysql_real_escape_string($_POST['meeting_date_Month_ID']);
+							$meetingTimeDay = mysql_real_escape_string($_POST['meeting_date_Day_ID']);
+							$meetingTimeYear = mysql_real_escape_string($_POST['meeting_date_Year_ID']);
+							
+							if ($meetingTimeHr > 12 || $meetingTimeHr < 1) {
+								die("Invalid hour inputted");
+							}
+							if ($meetingTimeMin > 59 || $meetingTimeMin < 0) {
+								die("Invalid minute inputted");
+							}
+							$meetingTimeHr = date("H", strtotime($meetingTimeHr.' '.$meetingTimeAmpm));
+							$mysqldate = date('Y-m-d H:i:s', mktime($meetingTimeHr, $meetingTimeMin, 0, $meetingTimeMonth+1, $meetingTimeDay, $meetingTimeYear));
+							if(strtotime($mysqldate) < strtotime('now')) {
+								print "<p> mysqlTime: ". strtotime($mysqldate) ."</p>";
+								print "<p> currTime: ". strtotime('now') ."</p>";
+								die("Our trains cannot travel through time and space. Please plan for a date in the future.");
+							}
+							$trainquery = mysql_query("UPDATE trains SET spaceAvailable='".$seatAvailable."', transportType='".$transportationType."', trainDescription='".$trainDescription."', meetingPlace='".$meetingPlace."', departureDateTime='".$mysqldate."', trainName='".$trainName."' WHERE trainid='".$trainID."'");
+
+							if($trainquery)
+							{
+								echo "<h1>Train $trainName successfully edited.</h1>";
+								echo "<p>We are now redirecting you to your profile page.</p>";
+						       	echo "<meta http-equiv='refresh' content='1.5;profile.php' />";
+							} else {
+								$message  = 'Invalid query: '.mysql_error($trainquery)."\n";
+								die($message);
+							}
+						}
+						else {
+							$trainInfoQuery = mysql_query("SELECT * FROM trains WHERE trainid='".$trainID."'");
+							if(!$trainInfoQuery) {
+								$message  = 'Invalid query: '.mysql_error($trainquery)."\n";
+								die($message);
+							}
+							if(mysql_num_rows($trainInfoQuery) == 1) {
+								$trainInfo = mysql_fetch_assoc($trainInfoQuery);
+							} else {
+								die("Invalid train ID given.");
+							}
+							 ?>
+							 <h2>Edit Train</h2>
+							 <p>Please enter your details below to edit the train.</p>
+				
+							 <form method="post" onsubmit="return validateAddTrain();" action="profile.php?tab=editTrain&trainID=<?php echo $trainID?>" name="addTrain" id="addTrain" >
+								<fieldset>
+									<label for="train_name">Train Name:</label>
+									<input type="text" name="train_name" id="train_name" value="<?php echo $trainInfo['trainName']?>" /><br /> 
+									<label for="meeting_time">Meeting Time:</label>
+									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
+									<label for="meeting_time_hr"></label>
+									<input style="margin-left:175px" type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
+									:
+									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
+									<select name="ampm" id="meeting_time">
+										<option value="am">am</option>
+										<option value="pm">pm</option>
+									</select>
+									<br /> 
+									<label for="transportation_type">Transportation Type:</label>
+									<select name="transportation_type" >
+										<option value="Driving"<?php echo($trainInfo['transportType'] == 'Driving'?' selected="selected"':null) ?>>Driving</option>
+										<option value="Walking"<?php echo($trainInfo['transportType'] == 'Walking'?' selected="selected"':null) ?>>Walking</option>
+										<option value="Biking"<?php echo($trainInfo['transportType'] == 'Biking'?' selected="selected"':null) ?>>Biking</option>
+										<option value="Public"<?php echo($trainInfo['transportType'] == 'Public'?' selected="selected"':null) ?>>Public Transportation</option>
+										<option value="Other"<?php echo($trainInfo['transportType'] == 'Other'?' selected="selected"':null) ?>>Other</option>
+									</select><br />
+									</script>
+									<label for="meeting_place">Meeting Place:</label>
+									<input type="text" name="meeting_place" id="meeting_place" value="<?php echo $trainInfo['meetingPlace']?>" /><br />
+									<label for="seat_available">Spots Available:</label>
+									<input type="text" name="seat_available" id="seat_available" value="<?php echo $trainInfo['spaceAvailable']?>"/><br /> 
+									<label for="train_description">Train Description:</label>
+									<textarea rows="6" cols = "50" name="train_description" id="train_description"><?php echo $trainInfo['trainDescription']?></textarea>
+									<br /> 
+									<label for="network">Network:</label>
+									<select name="network">
+										 <?php 
+									        $result = mysql_query("SELECT * FROM network WHERE netid in 
+									        					(SELECT netid FROM user_in_net WHERE userid = '".$userId."') ORDER BY netid ASC");
+											if (!$result) {
+												$message  = 'Invalid query: ' . mysql_error() . "\n";
+												die($message);
+											}
+									        while ($row = mysql_fetch_assoc($result)) { 
+									            echo '<option value="'.$row['networkName'].'">'.$row['networkName'].'</option>';
+									        } 
+									    ?> 
+									</select><br />
+									<input type="submit" name="add" id="add" value="Edit Train" />
+								</fieldset>
+							</form>
+					</div>
+					<?php 
 						}
 	 				}
 	 				elseif ($tab == "addTrain") {

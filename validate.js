@@ -79,7 +79,8 @@ function validateAddTrain() {
 	var chosen_date = new Date(date[0], date[1], date[2], hour, min);
 	if (chosen_date < today) {
 		alert("Selected time has already passed.");
-		return false;
+		return false;cc
+		
 	}
 	
 	return true;
