@@ -96,7 +96,7 @@ a:hover, a:active, a:visited {
 	margin-top: 5px;
 }
 #trainslot {
-	height:84px;
+	height:100px;
 	width:620px;
 	border: 1px dotted #CCC;
 	padding:2px 5px 0px 5px;

@@ -288,16 +288,38 @@
 									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
 									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
 									</form>
-								</div>
-								<div id="slotexit">
 									<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-									<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+									<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
 									</form>
+									<?php 
+									if ($userId == $row['creator']) { 
+										$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
+										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
+										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
+										</form>
+									<?php 
+									}?>
 								</div>
 							</div>
 							<br>
 						<?php
 						} 
+					}
+					elseif ($tab == "delete"){
+						$delete = $_GET['trainID'];
+						if ($delete != null) {
+							$trainId = intval($delete);
+							$delUserInTrain = mysql_query("DELETE FROM user_in_train WHERE trainid = '".$trainId."'");
+							$delTrainInNet = mysql_query("DELETE FROM train_in_net WHERE trainid = '".$trainId."'");
+							$delTrainInvite = mysql_query("DELETE FROM train_invite WHERE trainid = '".$trainId."'");
+							$delTrain = mysql_query("DELETE FROM trains WHERE trainid = '".$trainId."'");
+							if (!$delUserInTrain || !$delTrainInNet || !$delTrainInNet || !$delTrain) {
+								echo "<p> Unable to delete train. </p>";
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							echo "<meta http-equiv='refresh' content='0;profile.php?tab=myTrains' />";
+						}
 					}
 					elseif ($tab == "viewTrains") {
 						$join = $_GET['joinTrain'];
@@ -346,7 +368,7 @@
 							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
-						   	echo "There are no trains in your network that you have not already joined. Create a train to start planning your lunch.";
+						   	echo "There are no trains in your network that you have not already joined. <a href=\"profile.php?tab=addTrain\">Create a train</a> to start planning your lunch.";
 					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
@@ -498,15 +520,15 @@
 							//Get all users who are NOT this user, and who are friends, and who are NOT already invited, and who are NOT already attending on this train
 							$trainNameQuery = mysql_query("SELECT trainName FROM trains WHERE trainid = '".$trainID."'");
 							$row = mysql_fetch_assoc($trainNameQuery);
-							
-							echo "<h2>Invite friends to join {$row['trainName']} </h2>";
+							?>
+							<p style="font-size:15px; font-weight:bold">Invite friends to join <?php echo $row['trainName'] ?>:</p>
+							<?php 
 							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' 
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$userId."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
 													AND userid NOT IN (select userid FROM user_in_train WHERE trainid = '".$trainID."')");
-							if (!$result) {
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
+							if (mysql_num_rows($result) == 0) {
+								echo "<p>All your friends have already been invited on this train.</p>";
 							}
 							while ($row = mysql_fetch_assoc($result)) {
 								$friendid = $row['userid'];
@@ -597,8 +619,7 @@
 								?>
 								<div id="trainslot">
 									<div id="slotinfo">
-									<?php 
-									
+									<?php
 										echo "<p> <b>{$trainName['trainName']}</b> </p>";
 							    		$mysqldate = $trainName['departureDateTime'];
 										$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
@@ -625,10 +646,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image" style='float:left' src="images/accept.png" name="invite" width="40" height="45">
+								<input type="image" style='float:left' src="images/accept.png" name="invite" width="64" height="23">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image" style='float:left' src="images/decline.png" name="dec" width="40" height="45">
+								<input type="image" style='float:left' src="images/decline.png" name="dec" width="67" height="23">
 								</form>
 								
 								</div>
@@ -658,7 +679,7 @@
 						}
 						?>
 						<form method="post" action="profile.php?tab=editProfile" id="registerform">
-							<input type="submit" name="edit" id="edit" value="Edit Profile" />
+							<input type="image" name="edit" src="images/editprofile.png" width="90" height="23" />
 						</form>
 						<?php
 					} 
@@ -753,73 +774,54 @@
 							}
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=friends' />";
 						}
-	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."'");
-						if (!$result) {
+	 					$isFriend = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' AND userid IN 
+	 					                      (SELECT friendid FROM user_friends WHERE userid='".$userId."' ORDER BY userid ASC)");
+	 					$isNotFriend = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' AND userid NOT IN 
+	 					                      (SELECT friendid FROM user_friends WHERE userid='".$userId."' ORDER BY userid ASC)");
+						if (!$isFriend || !$isNotFriend) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
 						}
-						while ($row = mysql_fetch_assoc($result)) {
-							$friendID = $row['userid'];
-							$friendFirstName = $row['firstname'];
-							$friendLastName = $row['lastname'];
-							$userProfileHref = "profile.php?tab=viewUser&id=$friendID";	
+						echo "<p><b>Your friends:</b></p>";
+						if(mysql_num_rows($isFriend) == 0) {
+							echo "<p> You have not added any friends yet :( </p>";
+							echo "<br>";
+						}
+						while($friendRow = mysql_fetch_assoc($isFriend)) {
+							$fID = $friendRow['userid'];
+							$fFirstName = $friendRow['firstname'];
+							$fLastName = $friendRow['lastname'];
+							$userProfileHref = "profile.php?tab=viewUser&id=$fID";
+							$leavehref = "profile.php?tab=friends&leaveFriend=$fID";
 							?>
-							<?php
-							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
-							if (mysql_num_rows($friendQuery) == 1) {
-								$href = "profile.php?tab=friends&leaveFriend=$friendID"; ?>
-								<div>
-									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
-									<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
+							<div>
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$fFirstName $fLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $leavehref ?>" name="leaveF" id="leaveFriend">
 										<input type="image"  src="images/removefriend.png" name="leaveF" width="117" height="23" />
 									</form>
 								</div>
-				 			<?php
-							} else { 
-								$href = "profile.php?tab=friends&addFriend=$friendID";
-								?>
+							<?php 
+						}
+						echo "<p><b>Add friends!</b></p>";
+	 					if(mysql_num_rows($isNotFriend) == 0) {
+							echo "<p> You have already added everyone... </p>";
+							echo "<br>";
+						}
+						while($notFriendRow = mysql_fetch_assoc($isNotFriend)) {
+							$fID = $notFriendRow['userid'];
+							$fFirstName = $notFriendRow['firstname'];
+							$fLastName = $notFriendRow['lastname'];
+							$userProfileHref = "profile.php?tab=viewUser&id=$fID";
+							$addhref = "profile.php?tab=friends&addFriend=$fID";
+							?>
 								<div>
-									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
-									<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$fFirstName $fLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $addhref ?>" name="joinF" id="addFriend">
 										<input type="image"  src="images/friend.png" name="joinF" width="93" height="23" />
 									</form>
 								</div>
 							<?php 
-							}
 						}
-						/*
-	 					$currentFriendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$_SESSION['userID']."'");
-	 					if(!$currentFriendQuery) {
-	 						$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
-						}
-						while ($row = mysql_fetch_assoc($currentFriendQuery)) {
-							$friendID = $row['friendid'];
-							$friendNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$friendID."'");
-							if(!$friendNameQuery) {
-		 						$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
-							}
-							if(mysql_num_rows($friendNameQuery) == 1) {
-								$friendNameRow = mysql_fetch_assoc($friendNameQuery);
-								$friendFirstName = $friendNameRow['firstname'];
-								$friendLastName = $friendNameRow['lastname'];
-								echo "<p> $friendFirstName $friendLastName </p>";
-							}
-						}
-	 					echo "<br>";
-	 					echo "<h2>These people are not your friends.</h2>";
-	 					//i want all the users who are NOT this user AND are not already friends with this user
-	 					//query is wrong
-	 					$peopleNotFriendsQuery = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."' AND NOT EXISTS (SELECT friendid FROM user_friends WHERE userid = '".$_SESSION['userID']."')");
-	 					if (!$peopleNotFriendsQuery) {
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
-						}
-						while ($row = mysql_fetch_assoc($peopleNotFriendsQuery)) {
-							echo "<p> {$row['firstname']} {$row['lastname']} </p>";
-						}
-						*/
 	 				}  				
 	 				elseif ($tab == "viewUser") {
 	 					$viewID = $_GET['id'];
@@ -929,16 +931,15 @@
 							$networkDescription = $network['description'];
 							$href = "profile.php?tab=viewNetwork&leaveN=$netID";  ?>
 							
-							<div>
+							<div style="border-bottom:1px dotted;width:525px">
 								<div style='float:left; width:400px'>
 									<b><?php echo $networkName ?></b>
 									<p><?php echo $networkDescription ?></p>
 								</div>
 								<div>
 									<form method="post" action="<?php echo $href ?>" name="leaveN" id="leaveN">
-										<input type="image"  src="images/leave.png" name="leaveN" width="20" height="20" />
+										<input type="image"  src="images/leavenetwork.png" name="leaveN" width="117" height="23" />
 									</form>
-									<br></br>
 								</div>
 							</div>
 							
@@ -948,9 +949,8 @@
 						echo "<br>";
 						echo "<p><b>Join Network:</b></p>";
 						$notMemberNetworkIDQuery = mysql_query("SELECT netid FROM network WHERE netid NOT IN (SELECT netid FROM user_in_net WHERE userid = '".$userId."')");
-						if (!$notMemberNetworkIDQuery) {
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
+						if (mysql_num_rows($notMemberNetworkIDQuery) == 0) {
+							echo "<p> There are currently no networks for you to join. </p>";
 						}
 						while ($row = mysql_fetch_assoc($notMemberNetworkIDQuery)) {
 							$netID = $row['netid'];
@@ -960,7 +960,7 @@
 							$networkDescription = $network['description'];
 							$href = "profile.php?tab=viewNetwork&joinN=$netID" ?>
 							
-							<div>
+							<div style="border-bottom:1px dotted;width:525px">
 								<div style='float:left; width:400px'>
 									<b><?php echo $networkName ?></b>
 									<p><?php echo $networkDescription ?></p>
@@ -969,7 +969,6 @@
 									<form method="post" action="<?php echo $href ?>" name="joinN" id="joinN">
 										<input type="image"  src="images/joinnetwork.png" name="joinN" width="104" height="23" />
 									</form>
-									<br></br>
 								</div>
 							</div>
 							
@@ -979,7 +978,7 @@
 						?>
 						<form method="post" action="profile.php?tab=addNetwork" name="registerform"
 						id="registerform">
-						<input type="submit" name="addNetwork" id="addNetwork" value="Add network" />
+						<input type="image" src="images/addnetwork.png" name="addNetwork" width="103" height="23" />
 						</form>
 						<?php 
 	 				}

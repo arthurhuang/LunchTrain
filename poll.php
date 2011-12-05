@@ -11,7 +11,7 @@
 <body>  
 <div id="main">
 <?php 
-	if ($detect->isMobile()) {
+	if (True) {
     	// any mobile platform
     	if(!empty($_GET['userid'])) {
     		$userID = $_GET['userid'];
