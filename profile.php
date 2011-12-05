@@ -699,7 +699,6 @@
 										<input type="submit" name="edit" id="edit" value="Save changes" />
 									</fieldset>
 							</form>
-						<?php  
 						}
 					}
 					elseif ($tab == "submitProfile") {
@@ -725,13 +724,7 @@
 								$message  = 'Invalid query: ' . mysql_error() . '\n';
 								echo ($message);
 							}
-						} else { ?>
-							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
-							<input type="submit" name="edit" id="edit" value="Edit Profile" />
-							</form>
-							<p>You did not fill in all fields.</p>
-						<?php 	
-						}
+						} 
 					}
 	 				elseif ($tab == "friends") {
 	 					$join = $_GET['addFriend'];
@@ -1117,6 +1110,8 @@
 									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
+									<br />
+									<label for="meeting_time_hr"></label>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
@@ -1133,12 +1128,14 @@
 										<option value="Public">Public Transportation</option>
 										<option value="Other">Other</option>
 									</select><br />
+									</script>
 									<label for="meeting_place">Meeting Place:</label>
 									<input type="text" name="meeting_place" id="meeting_place" /><br />
 									<label for="seat_available">Spots Available:</label>
 									<input type="text" name="seat_available" id="seat_available" /><br /> 
-									<label for="train_description">Short Description:</label>
-									<input type="text" name="train_description" id="train_description" /><br /> 
+									<label for="train_description">Train Description:</label>
+									<textarea rows="6" cols = "50" name="train_description" id="train_description"></textarea>
+									<br /> 
 									<label for="network">Network:</label>
 									<select name="network">
 										 <?php 
