@@ -29,14 +29,31 @@ function validateRegistration() {
 
 function validateAddTrain() {
 	var name=document.forms["addTrain"]["train_name"].value;
+	var meeting=document.forms["addTrain"]["meeting_place"].value;
+	var spots=document.forms["addTrain"]["seat_available"].value;
 	var date=document.forms["addTrain"]["meeting_date"].value.split("-");
 	var hour=document.forms["addTrain"]["meeting_time_hr"].value;
 	var min=document.forms["addTrain"]["meetime_time_min"].value;
 	
 	if (name == "" || name == None) {
 		alert("Please enter a name for your train. \nCan be a destination.");
+		document.forms["addTrain"]["train_name"].refocus();
 		return false;
 	}
+	
+	if (meeting == "" || meeting == None) {
+		alert("Please enter where your train is meeting.\nCan be a departure point, or just meet at your destination.");
+		document.forms["addTrain"]["meeting_place"].refocus();
+		return false;
+	}
+	
+	if (spots == "" || spots == None || isNaN(spots)) {
+		alert("Please enter the maximum number of people that can currently come.\nFor instance, if you are a driver, how many can your car hold in addition to you?");
+		document.forms["addTrain"]["seat_available"].value = "";
+		document.forms["addTrain"]["seat_available"].refocus();
+		return false;
+	}
+	
 	if (hour == "" || hour == None || min == "" || min == None || isNaN(hour) || isNaN(min) || hour < 1 || hour > 12 || min < 0 || min > 59) {
 		alert("Invalid time.");
 		document.forms["addTrain"]["meeting_time_hr"].value="";
@@ -45,7 +62,9 @@ function validateAddTrain() {
 		return false;
 	}
 	if (document.forms["addTrain"]["meeting_time_min"].value == "pm") {
+		if (hour != 12) {
 			hour += 12;
+		}
 	} else if (hour == 12) {
 		hour = 0;
 	}
