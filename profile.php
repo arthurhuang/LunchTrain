@@ -289,16 +289,38 @@
 									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
 									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
 									</form>
-								</div>
-								<div id="slotexit">
 									<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-									<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+									<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
 									</form>
+									<?php 
+									if ($userId == $row['creator']) { 
+										$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
+										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
+										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
+										</form>
+									<?php 
+									}?>
 								</div>
 							</div>
 							<br>
 						<?php
 						} 
+					}
+					elseif ($tab == "delete"){
+						$delete = $_GET['trainID'];
+						if ($delete != null) {
+							$trainId = intval($delete);
+							$delUserInTrain = mysql_query("DELETE FROM user_in_train WHERE trainid = '".$trainId."'");
+							$delTrainInNet = mysql_query("DELETE FROM train_in_net WHERE trainid = '".$trainId."'");
+							$delTrainInvite = mysql_query("DELETE FROM train_invite WHERE trainid = '".$trainId."'");
+							$delTrain = mysql_query("DELETE FROM trains WHERE trainid = '".$trainId."'");
+							if (!$delUserInTrain || !$delTrainInNet || !$delTrainInNet || !$delTrain) {
+								echo "<p> Unable to delete train. </p>";
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							echo "<meta http-equiv='refresh' content='0;profile.php?tab=myTrains' />";
+						}
 					}
 					elseif ($tab == "viewTrains") {
 						$join = $_GET['joinTrain'];
