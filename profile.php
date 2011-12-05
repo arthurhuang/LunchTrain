@@ -713,13 +713,7 @@
 								$message  = 'Invalid query: ' . mysql_error() . '\n';
 								echo ($message);
 							}
-						} else { ?>
-							<form method="post" action="profile.php?tab=editProfile" name="registerform" id="registerform">
-							<input type="submit" name="edit" id="edit" value="Edit Profile" />
-							</form>
-							<p>You did not fill in all fields.</p>
-						<?php 	
-						}
+						} 
 					}
 	 				elseif ($tab == "friends") {
 	 					$join = $_GET['addFriend'];
@@ -1105,8 +1099,8 @@
 									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
-									<label for="meeting_time_hr"></label>
 									<br />
+									<label for="meeting_time_hr"></label>
 									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
@@ -1129,8 +1123,8 @@
 									<label for="seat_available">Spots Available:</label>
 									<input type="text" name="seat_available" id="seat_available" /><br /> 
 									<label for="train_description">Train Description:</label>
-									<textarea rows="6" cols = "50" name="train_description" id="train_description" /><br /> 
-
+									<textarea rows="6" cols = "50" name="train_description" id="train_description"></textarea>
+									<br /> 
 									<label for="network">Network:</label>
 									<select name="network">
 										 <?php 
