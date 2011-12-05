@@ -293,7 +293,7 @@
 									<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
 									</form>
 									<?php 
-									if ($userId == $row['creator']) { 
+									if ($row['creator'] == 1) { 
 										$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
 										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
 										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
