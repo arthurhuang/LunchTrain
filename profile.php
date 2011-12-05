@@ -177,42 +177,51 @@
 						    if(mysql_num_rows($checkNetworkUserTrain) != 1) {
 						    	continue;
 						    }
-							?>
-							<div id="trainslot">
-								<div id="slotinfo">
-									
-									<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $searchRow['trainName'] ?></b> </a> </p>
-									<?php
-									$mysqldate = $searchRow['departureDateTime'];
-									$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
-						    		echo "<p> Departing at $deptTime from {$searchRow['meetingPlace']}</p>";
-						    		echo "<p> {$searchRow['transportType']} with {$searchRow['spaceAvailable']} spaces available </p>";
-						    		echo "<p> Comments: {$searchRow['trainDescription']} </p>";
-						    		echo "<p>Network: $networkName"; 
-						    		echo "</p>";
-						    		echo "<br>";
-						    		
-						    		 ?>
-						    		
-						    	</div>
-						 		<div id="slotoptions">
-									<?php 
-									$trainId = $searchRow['trainid'];
-									$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
-									$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
-									$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
-									<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
-									<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
-									</form>
+						    ?>
+								<div id="trainslot">
+									<div id="slotinfo">
+										
+										<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $searchRow['trainName'] ?></b> </a> </p>
+										<?php
+										$mysqldate = $searchRow['departureDateTime'];
+										$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
+							    		echo "<p> Departing at $deptTime from {$searchRow['meetingPlace']}</p>";
+							    		echo "<p> {$searchRow['transportType']} with {$searchRow['spaceAvailable']} spaces available </p>";
+							    		echo "<p> Comments: {$searchRow['trainDescription']} </p>";
+							    		echo "<p>Network: $networkName"; 
+							    		echo "</p>";
+							    		echo "<br>"
+							    		 ?>
+							    	</div> <?php 
+						    $checkUserInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND trainid = '".$trainID."'");
+						    if(mysql_num_rows($checkUserInTrain) == 1) {
+								?>
+							 		<div id="slotoptions">
+										<?php 
+										$trainId = $searchRow['trainid'];
+										$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId";
+										$href = "profile.php?tab=viewTrains&leaveTrain=$trainId";
+										$invHref = "profile.php?tab=invite&trainID=$trainId"; ?>
+										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
+										<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
+										</form>
+									</div>
+									<div id="slotexit">
+										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+										<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+										</form>
+									</div>
+							<?php
+						    } else {
+						    	$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
+								?>
+								<form method="post" action="<?php echo $href ?>" name="join" id="jointrain">
+								<input type="image" style='float:left' src="images/join.png" name="image" width="83" height="23">
+								</form>
 								</div>
-								<div id="slotexit">
-									<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-									<input type="image"  src="images/leave.png" name="image" width="20" height="20">
-									</form>
-								</div>
-							</div>
-							<br>
-						<?php
+								<br>
+						    	<?php 
+						    }
 						}
 					}
 					elseif ($tab == "myTrains") {
@@ -336,7 +345,7 @@
 							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
-						   	echo "There are no trains in your network. Create a train to start planning your lunch.";
+						   	echo "There are no trains in your network that you have not already joined. Create a train to start planning your lunch.";
 					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
