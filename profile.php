@@ -196,6 +196,7 @@
 							    	</div> <?php 
 						    $checkUserInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' AND trainid = '".$trainID."' AND attending='1'");
 						    if(mysql_num_rows($checkUserInTrain) == 1) {
+						    	$checkUserInTrainRow = mysql_fetch_assoc($checkUserInTrain);
 								?>
 							 		<div id="slotoptions">
 										<?php 
@@ -206,11 +207,26 @@
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
 										<input type="image"  src="images/addfriend.png" name="invite" width="99" height="23">
 										</form>
-									</div>
-									<div id="slotexit">
 										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-										<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+										<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
 										</form>
+										<?php 
+										if (1 == $checkUserInTrainRow['creator']) { 
+											$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
+											<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
+											<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
+											</form>
+										
+										<?php 
+										}?>
+									</div>
+										<?php 
+										if (1 == $checkUserInTrainRow['creator']) { ?>
+										<div>
+											<p> <a href=<?php echo $editHref ?>>Edit</a> </p>
+										</div>
+									<?php 
+									}?>
 									</div>
 							<?php
 						    } else {
