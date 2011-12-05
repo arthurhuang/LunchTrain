@@ -569,6 +569,18 @@
 							?>
 							<p style="font-size:15px; font-weight:bold">Invite friends to join <?php echo $row['trainName'] ?>:</p>
 							<?php 
+							//check if there are still spaces available
+							$spacesAvailableQuery = mysql_query("SELECT spaceAvailable FROM trains WHERE trainid = $trainID");
+							if(!$spacesAvailableQuery) {
+								$message  = 'Invalid query: ' . mysql_error() . "\n";
+								die($message);
+							}
+							$row = mysql_fetch_assoc($spacesAvailableQuery);
+							$spacesAvailable = $row['spaceAvailable'];
+							if($spacesAvailable < 1) {
+								echo "<p>Sorry, train is already full. Please choose another train.</p>";
+								break;
+							}
 							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' 
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$userId."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
