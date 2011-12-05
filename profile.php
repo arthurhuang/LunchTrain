@@ -14,7 +14,6 @@
 <body>
 <div id="crate">
 		<div id="topbar">
-	 		
 	 		<div id="topbartitle">
 	 		</div>
 	 		<div id="searchbar">
@@ -852,7 +851,7 @@
 							$getTrainInfo = mysql_query("SELECT * FROM trains WHERE trainid in 
 														(SELECT trainid FROM user_in_train WHERE userid = '".$viewID."' 
 														AND attending = 1)");
-							echo "<h2> Trains $userFirstname $userLastname are on: </h2> ";
+							echo "<h2> Trains $userFirstname $userLastname is on: </h2> ";
 							if (!$getTrainInfo) {
 								$message  = 'Invalid query: ' . mysql_error() . "\n";
 								die($message); 
