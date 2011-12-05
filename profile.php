@@ -598,8 +598,7 @@
 								?>
 								<div id="trainslot">
 									<div id="slotinfo">
-									<?php 
-									
+									<?php
 										echo "<p> <b>{$trainName['trainName']}</b> </p>";
 							    		$mysqldate = $trainName['departureDateTime'];
 										$deptTime = date('h:i a', strtotime( $mysqldate)).' on '.date('l, F jS, Y', strtotime( $mysqldate));
