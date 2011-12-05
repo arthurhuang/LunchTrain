@@ -506,9 +506,8 @@
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$userId."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
 													AND userid NOT IN (select userid FROM user_in_train WHERE trainid = '".$trainID."')");
-							if (!$result) {
-								$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
+							if (mysql_num_rows($result) == 0) {
+								echo "<p>All your friends have already been invited on this train.</p>";
 							}
 							while ($row = mysql_fetch_assoc($result)) {
 								$friendid = $row['userid'];
