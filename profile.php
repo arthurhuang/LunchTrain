@@ -369,7 +369,7 @@
 							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
-						   	echo "There are no trains in your network that you have not already joined. Create a train to start planning your lunch.";
+						   	echo "There are no trains in your network that you have not already joined. <a href=\"profile.php?tab=addTrain\">Create a train</a> to start planning your lunch.";
 					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
@@ -775,73 +775,54 @@
 							}
 							echo "<meta http-equiv='refresh' content='0;profile.php?tab=friends' />";
 						}
-	 					$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."'");
-						if (!$result) {
+	 					$isFriend = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' AND userid IN 
+	 					                      (SELECT friendid FROM user_friends WHERE userid='".$userId."' ORDER BY userid ASC)");
+	 					$isNotFriend = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' AND userid NOT IN 
+	 					                      (SELECT friendid FROM user_friends WHERE userid='".$userId."' ORDER BY userid ASC)");
+						if (!$isFriend || !$isNotFriend) {
 							$message  = 'Invalid query: ' . mysql_error() . "\n";
 							die($message);
 						}
-						while ($row = mysql_fetch_assoc($result)) {
-							$friendID = $row['userid'];
-							$friendFirstName = $row['firstname'];
-							$friendLastName = $row['lastname'];
-							$userProfileHref = "profile.php?tab=viewUser&id=$friendID";	
+						echo "<p><b>Your friends:</b></p>";
+						if(mysql_num_rows($isFriend) == 0) {
+							echo "<p> You have not added any friends yet :( </p>";
+							echo "<br>";
+						}
+						while($friendRow = mysql_fetch_assoc($isFriend)) {
+							$fID = $friendRow['userid'];
+							$fFirstName = $friendRow['firstname'];
+							$fLastName = $friendRow['lastname'];
+							$userProfileHref = "profile.php?tab=viewUser&id=$fID";
+							$leavehref = "profile.php?tab=friends&leaveFriend=$fID";
 							?>
-							<?php
-							$friendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$userId."' AND friendid = '".$friendID."' ORDER BY userid ASC ");
-							if (mysql_num_rows($friendQuery) == 1) {
-								$href = "profile.php?tab=friends&leaveFriend=$friendID"; ?>
-								<div>
-									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
-									<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
+							<div>
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$fFirstName $fLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $leavehref ?>" name="leaveF" id="leaveFriend">
 										<input type="image"  src="images/removefriend.png" name="leaveF" width="117" height="23" />
 									</form>
 								</div>
-				 			<?php
-							} else { 
-								$href = "profile.php?tab=friends&addFriend=$friendID";
-								?>
+							<?php 
+						}
+						echo "<p><b>Add friends!</b></p>";
+	 					if(mysql_num_rows($isNotFriend) == 0) {
+							echo "<p> You have already added everyone... </p>";
+							echo "<br>";
+						}
+						while($notFriendRow = mysql_fetch_assoc($isNotFriend)) {
+							$fID = $notFriendRow['userid'];
+							$fFirstName = $notFriendRow['firstname'];
+							$fLastName = $notFriendRow['lastname'];
+							$userProfileHref = "profile.php?tab=viewUser&id=$fID";
+							$addhref = "profile.php?tab=friends&addFriend=$fID";
+							?>
 								<div>
-									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
-									<form method="post" action="<?php echo $href ?>" name="joinF" id="addFriend">
+									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$fFirstName $fLastName" ?> </b> </a> 
+									<form method="post" action="<?php echo $addhref ?>" name="joinF" id="addFriend">
 										<input type="image"  src="images/friend.png" name="joinF" width="93" height="23" />
 									</form>
 								</div>
 							<?php 
-							}
 						}
-						/*
-	 					$currentFriendQuery = mysql_query("SELECT * FROM user_friends WHERE userid = '".$_SESSION['userID']."'");
-	 					if(!$currentFriendQuery) {
-	 						$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
-						}
-						while ($row = mysql_fetch_assoc($currentFriendQuery)) {
-							$friendID = $row['friendid'];
-							$friendNameQuery = mysql_query("SELECT firstname, lastname FROM users WHERE userid = '".$friendID."'");
-							if(!$friendNameQuery) {
-		 						$message  = 'Invalid query: ' . mysql_error() . "\n";
-								die($message);
-							}
-							if(mysql_num_rows($friendNameQuery) == 1) {
-								$friendNameRow = mysql_fetch_assoc($friendNameQuery);
-								$friendFirstName = $friendNameRow['firstname'];
-								$friendLastName = $friendNameRow['lastname'];
-								echo "<p> $friendFirstName $friendLastName </p>";
-							}
-						}
-	 					echo "<br>";
-	 					echo "<h2>These people are not your friends.</h2>";
-	 					//i want all the users who are NOT this user AND are not already friends with this user
-	 					//query is wrong
-	 					$peopleNotFriendsQuery = mysql_query("SELECT * FROM users WHERE userid <> '".$_SESSION['userID']."' AND NOT EXISTS (SELECT friendid FROM user_friends WHERE userid = '".$_SESSION['userID']."')");
-	 					if (!$peopleNotFriendsQuery) {
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
-						}
-						while ($row = mysql_fetch_assoc($peopleNotFriendsQuery)) {
-							echo "<p> {$row['firstname']} {$row['lastname']} </p>";
-						}
-						*/
 	 				}  				
 	 				elseif ($tab == "viewUser") {
 	 					$viewID = $_GET['id'];
