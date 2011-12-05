@@ -763,7 +763,7 @@
 								<div>
 									<a href=<?php echo $userProfileHref ?> style='float:left; width:100px' > <b><?php echo "$friendFirstName $friendLastName" ?> </b> </a> 
 									<form method="post" action="<?php echo $href ?>" name="leaveF" id="leaveFriend">
-										<input type="image"  src="images/leave.png" name="leaveF" width="20" height="20" />
+										<input type="image"  src="images/removefriend.png" name="leaveF" width="117" height="23" />
 									</form>
 								</div>
 				 			<?php
