@@ -64,7 +64,9 @@
 	 				$trainId = $row['trainid'];
 	 				$train = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'");
 	 				$trainrow = mysql_fetch_assoc($train);
-	 				echo "<p> {$trainrow['trainName']}  </p>"; 
+	 				$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId"; ?>
+	 				<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $trainrow['trainName'] ?></b> </a> </p>
+				<?php 
 				}?>
 				
 				<form method="post" action="profile.php?tab=addTrain" name="addtrain" id="addtrain">
