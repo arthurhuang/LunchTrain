@@ -93,10 +93,10 @@
 	 					}
 	 					if ($tabValue == "viewTrains") {
 	 						$link = "profile.php?tab=viewTrains";
-	 						echo "<li><a href=$link style='background-color:#ddd'>Departing Trains</a></li>";
+	 						echo "<li><a href=$link style='background-color:#ddd'>Search Trains</a></li>";
 	 					} else {
 	 						$link = "profile.php?tab=viewTrains";
-	 						echo "<li><a href=$link >Departing Trains</a></li>";
+	 						echo "<li><a href=$link >Search Trains</a></li>";
 	 					}
 	 					if ($tabValue == "aboutMe") {
 	 						$link = "profile.php?tab=aboutMe";
@@ -245,7 +245,7 @@
 							die($message);
 						}
 						if(mysql_num_rows($result) == 0) {
-						   	echo "You have not joined any trains. Look at <a href=\"profile.php?tab=viewTrains\">Departing Trains</a> for a list of trains you can join.";
+						   	echo "You have not joined any trains. Look at <a href=\"profile.php?tab=viewTrains\">Search Trains</a> for a list of trains you can join.";
 					    }
 						while ($row = mysql_fetch_assoc($result)) {
 							$trainID = $row['trainid'];
@@ -493,11 +493,20 @@
 										<form method="post" action="<?php echo $invHref ?>" name="invite" id="invite">
 										<input type="image" style='float:left' src="images/addfriend.png" name="invite" width="99" height="23">
 										</form>
-										</div>
-										<div id="slotexit">
-											<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
-											<input type="image"  src="images/leave.png" name="image" width="20" height="20">
+										<form method="post" action="<?php echo $href ?>" name="leave" id="leavetrain">
+										<input type="image"  src="images/leavetrain.png" name="image" width="97" height="23">
+										</form>
+										<?php 
+										$row = mysql_fetch_assoc($userAlreadyInTrain);
+										if ($row['creator'] == 1) { 
+											$delHref = "profile.php?tab=delete&trainID=$trainId"; ?>
+											<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
+											<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
 											</form>
+										<?php 
+										}?>
+									</div>
+										
 									<?php
 									} else { 
 										$href = "profile.php?tab=viewTrains&joinTrain=$trainId";
@@ -509,7 +518,7 @@
 									}
 									?>
 									
-						 		</div>
+						 		
 						    </div> <?php 
 						}
 					}
