@@ -499,8 +499,9 @@
 							//Get all users who are NOT this user, and who are friends, and who are NOT already invited, and who are NOT already attending on this train
 							$trainNameQuery = mysql_query("SELECT trainName FROM trains WHERE trainid = '".$trainID."'");
 							$row = mysql_fetch_assoc($trainNameQuery);
-							
-							echo "<h2>Invite friends to join {$row['trainName']} </h2>";
+							?>
+							<p style="font-size:15px; font-weight:bold">Invite friends to join <?php echo $row['trainName'] ?>:</p>
+							<?php 
 							$result = mysql_query("SELECT * FROM users WHERE userid <> '".$userId."' 
 													AND userid IN (SELECT friendid FROM user_friends WHERE userid = '".$userId."')
 													AND userid NOT IN (select destid FROM train_invite WHERE trainid = '".$trainID."')
@@ -625,10 +626,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image" style='float:left' src="images/accept.png" name="invite" width="40" height="45">
+								<input type="image" style='float:left' src="images/accept.png" name="invite" width="64" height="23">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image" style='float:left' src="images/decline.png" name="dec" width="40" height="45">
+								<input type="image" style='float:left' src="images/decline.png" name="dec" width="67" height="23">
 								</form>
 								
 								</div>
@@ -658,7 +659,7 @@
 						}
 						?>
 						<form method="post" action="profile.php?tab=editProfile" id="registerform">
-							<input type="submit" name="edit" id="edit" value="Edit Profile" />
+							<input type="image" name="edit" src="images/editprofile.png" width="90" height="23" />
 						</form>
 						<?php
 					} 
@@ -929,16 +930,15 @@
 							$networkDescription = $network['description'];
 							$href = "profile.php?tab=viewNetwork&leaveN=$netID";  ?>
 							
-							<div>
+							<div style="border-bottom:1px dotted;width:525px">
 								<div style='float:left; width:400px'>
 									<b><?php echo $networkName ?></b>
 									<p><?php echo $networkDescription ?></p>
 								</div>
 								<div>
 									<form method="post" action="<?php echo $href ?>" name="leaveN" id="leaveN">
-										<input type="image"  src="images/leave.png" name="leaveN" width="20" height="20" />
+										<input type="image"  src="images/leavenetwork.png" name="leaveN" width="117" height="23" />
 									</form>
-									<br></br>
 								</div>
 							</div>
 							
@@ -948,9 +948,8 @@
 						echo "<br>";
 						echo "<p><b>Join Network:</b></p>";
 						$notMemberNetworkIDQuery = mysql_query("SELECT netid FROM network WHERE netid NOT IN (SELECT netid FROM user_in_net WHERE userid = '".$userId."')");
-						if (!$notMemberNetworkIDQuery) {
-							$message  = 'Invalid query: ' . mysql_error() . "\n";
-							die($message);
+						if (mysql_num_rows($notMemberNetworkIDQuery) == 0) {
+							echo "<p> There are currently no networks for you to join. </p>";
 						}
 						while ($row = mysql_fetch_assoc($notMemberNetworkIDQuery)) {
 							$netID = $row['netid'];
@@ -960,7 +959,7 @@
 							$networkDescription = $network['description'];
 							$href = "profile.php?tab=viewNetwork&joinN=$netID" ?>
 							
-							<div>
+							<div style="border-bottom:1px dotted;width:525px">
 								<div style='float:left; width:400px'>
 									<b><?php echo $networkName ?></b>
 									<p><?php echo $networkDescription ?></p>
@@ -969,7 +968,6 @@
 									<form method="post" action="<?php echo $href ?>" name="joinN" id="joinN">
 										<input type="image"  src="images/joinnetwork.png" name="joinN" width="104" height="23" />
 									</form>
-									<br></br>
 								</div>
 							</div>
 							
@@ -979,7 +977,7 @@
 						?>
 						<form method="post" action="profile.php?tab=addNetwork" name="registerform"
 						id="registerform">
-						<input type="submit" name="addNetwork" id="addNetwork" value="Add network" />
+						<input type="image" src="images/addnetwork.png" name="addNetwork" width="103" height="23" />
 						</form>
 						<?php 
 	 				}
