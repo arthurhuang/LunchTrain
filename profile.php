@@ -298,12 +298,17 @@
 										<form method="post" action="<?php echo $delHref ?>" name="leave" id="leavetrain">
 										<input type="image"  src="images/deletetrain.png" name="image" width="97" height="23">
 										</form>
-										<form method="post" action="<?php echo $editHref ?>" name="edit" id="edittrain">
-										<input type="image"  src="images/edittrain.png" name="image" width="97" height="23">
-										</form>
+										
 									<?php 
 									}?>
 								</div>
+									<?php 
+									if (1 == $row['creator']) { ?>
+										<div>
+											<p> <a href=<?php echo $editHref ?>>Edit</a> </p>
+										</div>
+									<?php 
+									}?>
 							</div>
 							<br>
 						<?php
@@ -509,6 +514,14 @@
 										<?php 
 										}?>
 									</div>
+										<?php
+										if (1 == $row['creator']) { 
+											$editHref = "profile.php?tab=editTrain&trainID=$trainId"; ?>
+											<div>
+												<p> <a href=<?php echo $editHref ?>>Edit</a> </p>
+											</div>
+										<?php 
+										}?>
 										
 									<?php
 									} else { 
