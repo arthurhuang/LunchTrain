@@ -40,6 +40,7 @@ function validateAddTrain() {
 	var date=document.forms["addTrain"]["meeting_date"].value.split("-");
 	var hour=document.forms["addTrain"]["meeting_time_hr"].value;
 	var min=document.forms["addTrain"]["meeting_time_min"].value;
+
 	if (name == "" || name == null) {
 		alert("Please enter a name for your train. \nCan be a destination.");
 		document.forms["addTrain"]["train_name"].focus();
@@ -52,7 +53,8 @@ function validateAddTrain() {
 		return false;
 	}
 	
-	if (spots == "" || spots == null || isNaN(spots) || spots<1) {
+
+	if (spots == "" || spots == null || isNaN(spots) || spots <= 0) {
 		alert("Please enter the maximum number of people that can currently come.\nFor instance, if you are a driver, how many can your car hold in addition to you?");
 		document.forms["addTrain"]["seat_available"].value = "";
 		document.forms["addTrain"]["seat_available"].focus();

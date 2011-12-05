@@ -90,7 +90,7 @@ else
 		<p style="font-size:20px; font-weight:bold">Register</p>
    		<p>Please enter your details below to register.</p>
    		<br></br>
-		<form name="register"  onsubmit="return validateRegistration();" method="post" action="register.php" id="registerform">
+		<form name="register" method="post" action="register.php" id="registerform" onsubmit="return validateRegistration();">
 		<fieldset>
 		<label for="Firstname">First name:</label><input type="text" name="firstName" id="firstName" /><br />
 		<label for="Lastname">Last name:</label><input type="text" name="lastName" id="lastName" /><br />
