@@ -62,12 +62,10 @@
 	 			
 	 			while ($row = mysql_fetch_assoc($trainsImIn)) {
 	 				$trainId = $row['trainid'];
-	 				$trainProfileHref = "profile.php?tab=trainProfile&trainID=$trainId"; 
-	 				$tNameQuery = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'"); 
-	 				$tName = mysql_fetch_assoc($tNameQuery); ?>
-	 				<p> <a href=<?php echo $trainProfileHref ?>> <b><?php echo $tName['trainName'] ?></b> </a> </p>						
-				<?php 
-	 			}?>
+	 				$train = mysql_query("SELECT * FROM trains WHERE trainid = '".$trainId."'");
+	 				$trainrow = mysql_fetch_assoc($train);
+	 				echo "<p> {$trainrow['trainName']}  </p>"; 
+				}?>
 				
 				<form method="post" action="profile.php?tab=addTrain" name="addtrain" id="addtrain">
 				<input type="image"  src="images/createtrain.png" name="train" width="99" height="23">
@@ -617,10 +615,10 @@
 								<div id="slotoptions">
 								
 								<form method="post" action="<?php echo $acceptLink ?>" name="invite" id="invite">
-								<input type="image"  src="images/accept.png" name="invite" width="64" height="23">
+								<input type="image" style='float:left' src="images/accept.png" name="invite" width="40" height="45">
 								</form>
 								<form method="post" action="<?php echo $declineLink ?>" name="dec" id="dec">
-								<input type="image"  src="images/decline.png" name="dec" width="67" height="23">
+								<input type="image" style='float:left' src="images/decline.png" name="dec" width="40" height="45">
 								</form>
 								
 								</div>
@@ -632,6 +630,11 @@
 					}
 					elseif ($tab == "aboutMe") {
 						$result = mysql_query("SELECT * FROM profiles WHERE userid = '".$userId."'");
+						if (!$result) {
+							echo "<p>Your profile has not been set up yet.</p>";
+							$message  = 'Invalid query: ' . mysql_error() . "\n";
+							die($message);
+						}
 						if(mysql_num_rows($result) == 0) {
 							echo "<p>Your profile has not been set up yet. Please click below to start editing your profile. </p>";
 						}
@@ -687,7 +690,6 @@
 										<input type="submit" name="edit" id="edit" value="Save changes" />
 									</fieldset>
 							</form>
-						<?php  
 						}
 					}
 					elseif ($tab == "submitProfile") {
@@ -1099,8 +1101,9 @@
 									<input type="text" name="train_name" id="train_name" /><br /> 
 									<label for="meeting_time">Meeting Time:</label>
 									<script>DateInput("meeting_date", true, "YYYY-MM-DD")</script>
+									<br />
 									<label for="meeting_time_hr"></label>
-									<input style="margin-left:175px" type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
+									<input type="text" name="meeting_time_hr" maxlength="2" size="4" id="meeting_time" />
 									:
 									<input type="text" name="meeting_time_min" maxlength="2" size="4" id="meeting_time" />
 									<select name="ampm" id="meeting_time">
