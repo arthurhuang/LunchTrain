@@ -624,6 +624,8 @@
 								$attending = 1;
 								$check = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' and trainid='".$trainID."'");
 								if(mysql_num_rows($check) == 1) {
+									$checkAlreadyInTrain = mysql_query("SELECT * FROM user_in_train WHERE userid='".$userId."' and trainid='".$trainID."' AND attending='1'");
+									if(mysql_num_rows($checkAlreadyInTrain)) $alreadyIn = True;
 									$joinTrain = mysql_query("UPDATE user_in_train set attending='1' WHERE userid='".$userId."' and trainid='".$trainID."'");
 								} else {
 									$joinTrain = mysql_query("INSERT INTO user_in_train (userid, trainid, attending)
@@ -640,7 +642,12 @@
 									$message  = 'Invalid query: ' . mysql_error() . "\n";
 									die($message);
 								}
+								if($alreadyIn) {
+									echo "You have already joined this train. Dismissing invite.";
+									echo "<meta http-equiv='refresh' content='2;profile.php?tab=inbox' />";
+								} else {
 								echo "<meta http-equiv='refresh' content='0;profile.php?tab=inbox' />";
+								}
 							} elseif ($response == "False") {
 								#Declined the invitation. Just delete this invitation. Maybe let sender know that invitation was declined
 								$declineInvite = mysql_query("DELETE from train_invite WHERE sourceid = '".$sourceID."' AND trainid = '".$trainID."' AND destid = '".$userId."'");
